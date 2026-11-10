@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ternium — SAP S/4HANA Implementation Status Report</title>
+<style>
+  :root {
+    --sap-blue:#0070F2; --sap-dark:#1D2D3E; --sap-mid:#354A5E; --sap-light:#EBF8FF;
+    --sap-gold:#E8A000; --sap-green:#107E3E; --sap-red:#BB0000; --sap-orange:#E76500;
+    --sap-grey:#6A6D70; --sap-bg:#F5F6F7; --sap-border:#D9D9D9; --white:#FFFFFF;
+    --radius:6px; --shadow:0 2px 8px rgba(0,0,0,0.08);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'72','SAP72',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--sap-bg); color:var(--sap-dark); font-size:14px; line-height:1.5; }
+  .header { background:var(--sap-dark); color:var(--white); padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:56px; position:sticky; top:0; z-index:100; box-shadow:0 2px 6px rgba(0,0,0,0.3); }
+  .header-brand { display:flex; align-items:center; gap:16px; }
+  .sap-logo { background:var(--sap-blue); color:white; font-weight:700; font-size:18px; padding:4px 10px; border-radius:3px; letter-spacing:1px; }
+  .header-title { font-size:16px; font-weight:600; opacity:0.95; }
+  .report-date { font-size:12px; opacity:0.7; }
+  .hero { background:linear-gradient(135deg,var(--sap-blue) 0%,var(--sap-mid) 100%); color:white; padding:32px 32px 28px; }
+  .hero h1 { font-size:24px; font-weight:700; margin-bottom:6px; }
+  .hero p { font-size:14px; opacity:0.85; max-width:700px; }
+  .hero-badges { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+  .badge { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:600; }
+  main { padding:24px 32px; max-width:1400px; margin:0 auto; }
+  .section-title { font-size:18px; font-weight:700; color:var(--sap-dark); margin:32px 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--sap-border); }
+  .section-icon { width:28px; height:28px; background:var(--sap-blue); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:13px; font-weight:700; flex-shrink:0; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:8px; }
+  .kpi-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 20px 16px; border-top:4px solid var(--sap-blue); transition:transform 0.15s; cursor:pointer; }
+  .kpi-card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,112,242,0.15); }
+  .kpi-card.green { border-top-color:var(--sap-green); } .kpi-card.red { border-top-color:var(--sap-red); }
+  .kpi-card.gold { border-top-color:var(--sap-gold); } .kpi-card.orange { border-top-color:var(--sap-orange); }
+  .kpi-value { font-size:36px; font-weight:700; line-height:1; color:var(--sap-dark); }
+  .kpi-label { font-size:12px; color:var(--sap-grey); margin-top:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+  .kpi-sub { font-size:11px; color:var(--sap-grey); margin-top:4px; }
+  .kpi-hint { font-size:10px; color:var(--sap-blue); margin-top:8px; opacity:0.7; }
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(29,45,62,0.55); z-index:200; align-items:center; justify-content:center; padding:24px; }
+  .modal-backdrop.open { display:flex; }
+  .modal-box { background:var(--white); border-radius:8px; box-shadow:0 8px 40px rgba(0,0,0,0.22); width:100%; max-width:780px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; animation:modalIn 0.18s ease; }
+  @keyframes modalIn { from { opacity:0; transform:translateY(12px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+  .modal-header { padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--sap-border); background:var(--sap-dark); color:var(--white); flex-shrink:0; }
+  .modal-header-title { font-size:15px; font-weight:700; }
+  .modal-close { background:none; border:none; color:rgba(255,255,255,0.7); font-size:22px; cursor:pointer; line-height:1; padding:0 4px; }
+  .modal-close:hover { color:white; }
+  .modal-body { padding:20px; overflow-y:auto; flex:1; }
+  .modal-subtitle { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sap-grey); margin-bottom:10px; }
+  .modal-table-wrap { overflow-x:auto; border:1px solid var(--sap-border); border-radius:6px; margin-bottom:20px; }
+  .modal-table-wrap table { width:100%; } .modal-table-wrap thead th { font-size:11px; } .modal-table-wrap tbody td { font-size:12px; }
+  .notes-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sap-grey); margin-bottom:6px; }
+  .notes-area { width:100%; height:96px; border:1px solid var(--sap-border); border-radius:6px; padding:10px 12px; font-size:13px; font-family:inherit; resize:vertical; outline:none; transition:border-color 0.15s; color:var(--sap-dark); }
+  .notes-area:focus { border-color:var(--sap-blue); }
+  .notes-footer { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+  .char-counter { font-size:11px; color:var(--sap-grey); } .char-counter.warn { color:var(--sap-orange); font-weight:700; }
+  .save-btn { background:var(--sap-blue); color:white; border:none; border-radius:4px; padding:7px 20px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+  .save-btn:hover { background:#0058c1; }
+  .save-flash { font-size:12px; color:var(--sap-green); font-weight:700; opacity:0; transition:opacity 0.3s; margin-right:12px; }
+  .save-flash.show { opacity:1; }
+  .filter-bar { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:14px; padding:10px 12px; background:var(--sap-bg); border-radius:6px; border:1px solid var(--sap-border); }
+  .filter-bar-label { font-size:11px; font-weight:700; color:var(--sap-grey); text-transform:uppercase; letter-spacing:0.5px; margin-right:4px; }
+  .filter-pill { padding:4px 12px; border-radius:12px; border:1px solid var(--sap-border); background:var(--white); font-size:11px; font-weight:600; cursor:pointer; color:var(--sap-dark); transition:all 0.12s; }
+  .filter-pill:hover { border-color:var(--sap-blue); color:var(--sap-blue); } .filter-pill.active { background:var(--sap-blue); color:white; border-color:var(--sap-blue); }
+  .pill-count { opacity:0.75; font-size:10px; } .modal-count { font-size:11px; color:var(--sap-grey); margin-left:auto; white-space:nowrap; }
+  .phase-timeline { display:grid; grid-template-columns:repeat(5,1fr); gap:0; background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .phase { padding:20px 16px; border-right:1px solid var(--sap-border); } .phase:last-child { border-right:none; }
+  .phase-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin-bottom:10px; }
+  .phase-name { font-size:13px; font-weight:700; color:var(--sap-dark); margin-bottom:4px; }
+  .phase-desc { font-size:11px; color:var(--sap-grey); margin-bottom:12px; line-height:1.4; }
+  .phase-status-pill { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; text-transform:uppercase; }
+  .pill-done { background:#E6F4EE; color:var(--sap-green); } .pill-active { background:#FEF3E2; color:var(--sap-orange); } .pill-pending { background:#F5F6F7; color:var(--sap-grey); }
+  .phase.done { border-top:4px solid var(--sap-green); } .phase.active { border-top:4px solid var(--sap-gold); } .phase.pending { border-top:4px solid var(--sap-border); }
+  .phase.done .phase-num { background:#E6F4EE; color:var(--sap-green); } .phase.active .phase-num { background:#FEF3E2; color:var(--sap-gold); } .phase.pending .phase-num { background:#F5F6F7; color:var(--sap-grey); }
+  .phase-progress { margin-top:12px; }
+  .progress-bar-bg { height:6px; background:var(--sap-border); border-radius:3px; overflow:hidden; margin-top:4px; }
+  .progress-bar-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+  .fill-green { background:var(--sap-green); } .fill-gold { background:var(--sap-gold); } .fill-grey { background:var(--sap-border); }
+  .phase-pct { font-size:11px; color:var(--sap-grey); font-weight:600; }
+  .ws-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+  .ws-card { background:var(--white); border-radius:var(--radius); cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; box-shadow:var(--shadow); overflow:hidden; }
+  .ws-card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,112,242,0.13); }
+  .ws-card-header { padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--sap-border); }
+  .ws-module { font-weight:700; font-size:14px; } .ws-badge { padding:2px 9px; border-radius:10px; font-size:11px; font-weight:700; }
+  .ws-card-body { padding:14px 16px; } .ws-stat-row { display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; }
+  .ws-stat-label { color:var(--sap-grey); } .ws-stat-value { font-weight:600; }
+  .ws-mini-bar { display:flex; height:8px; border-radius:4px; overflow:hidden; margin-top:10px; gap:1px; } .ws-mini-seg { flex:1; }
+  .charts-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .chart-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; }
+  .chart-title { font-size:14px; font-weight:700; margin-bottom:16px; color:var(--sap-dark); }
+  .bar-chart { display:flex; flex-direction:column; gap:10px; }
+  .bar-row { display:flex; align-items:center; gap:10px; }
+  .bar-label { font-size:12px; width:160px; flex-shrink:0; color:var(--sap-dark); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar-track { flex:1; height:20px; background:var(--sap-bg); border-radius:3px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:3px; display:flex; align-items:center; padding-left:6px; color:white; font-size:11px; font-weight:600; transition:width 0.6s ease; }
+  .bar-count { font-size:12px; font-weight:700; width:30px; text-align:right; flex-shrink:0; }
+  .table-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .table-header { padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--sap-border); }
+  .table-title { font-size:14px; font-weight:700; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { background:var(--sap-bg); padding:10px 14px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sap-grey); border-bottom:1px solid var(--sap-border); }
+  tbody td { padding:10px 14px; font-size:13px; border-bottom:1px solid var(--sap-bg); vertical-align:top; }
+  tbody tr:hover { background:var(--sap-light); }
+  .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+  .tag-green { background:#E6F4EE; color:var(--sap-green); } .tag-red { background:#FCEAEA; color:var(--sap-red); }
+  .tag-orange { background:#FEF3E2; color:var(--sap-orange); } .tag-blue { background:#E8F3FF; color:var(--sap-blue); }
+  .tag-grey { background:#F5F6F7; color:var(--sap-grey); } .tag-gold { background:#FEF7E0; color:var(--sap-gold); }
+  footer { margin-top:48px; padding:20px 32px; background:var(--sap-dark); color:rgba(255,255,255,0.5); font-size:12px; text-align:center; }
+  @media print { .header { position:static; } .kpi-card:hover { transform:none; } main { padding:16px; } }
+  @media (max-width:900px) { .phase-timeline { grid-template-columns:1fr; } .charts-row { grid-template-columns:1fr; } main { padding:16px; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <span class="sap-logo">SAP</span>
+    <span class="header-title">Ternium — S/4HANA Implementation Status Report</span>
+  </div>
+  <span class="report-date">Report Date: November 10, 2026</span>
+</header>
+
+<div class="hero">
+  <h1>Ternium S/4HANA Implementation</h1>
+  <p>FIN · CO · COGM · B&amp;A workstreams — Brazil, Americas, Spain. SAP Activate Methodology — 5-Phase Governance View.</p>
+  <div class="hero-badges">
+    <span class="badge">SAP Activate</span>
+    <span class="badge">FIN · CO · COGM · B&amp;A</span>
+    <span class="badge">BR · AMI · ES</span>
+    <span class="badge">107 Deltas</span>
+    <span class="badge">262 Parking Lots</span>
+  </div>
+</div>
+
+<main>
+
+  <div class="section-title"><span class="section-icon">◆</span> Executive Summary</div>
+  <div class="kpi-grid">
+    <div class="kpi-card" data-card="total-deltas" onclick="openModal('total-deltas')">
+      <div class="kpi-value">107</div>
+      <div class="kpi-label">Total Deltas / GAPs</div>
+      <div class="kpi-sub">Across all modules</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card red" data-card="open-deltas" onclick="openModal('open-deltas')">
+      <div class="kpi-value">80</div>
+      <div class="kpi-label">Open (Creado)</div>
+      <div class="kpi-sub">74.8% of total</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card green" data-card="closed-deltas" onclick="openModal('closed-deltas')">
+      <div class="kpi-value">19</div>
+      <div class="kpi-label">Closed Deltas</div>
+      <div class="kpi-sub">17.8% resolved</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card gold" data-card="mandatory-deltas" onclick="openModal('mandatory-deltas')">
+      <div class="kpi-value">21</div>
+      <div class="kpi-label">Mandatory Deltas</div>
+      <div class="kpi-sub">Priority 1 – GoLive blockers</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card" data-card="total-pl" onclick="openModal('total-pl')">
+      <div class="kpi-value">262</div>
+      <div class="kpi-label">Parking Lots</div>
+      <div class="kpi-sub">Total raised</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card green" data-card="pl-closed" onclick="openModal('pl-closed')">
+      <div class="kpi-value">217</div>
+      <div class="kpi-label">PLs Closed</div>
+      <div class="kpi-sub">82.8% closure rate</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card orange" data-card="pl-pending" onclick="openModal('pl-pending')">
+      <div class="kpi-value">42</div>
+      <div class="kpi-label">PLs Pending</div>
+      <div class="kpi-sub">33 client · 9 SAP</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+    <div class="kpi-card gold" data-card="interfaces" onclick="openModal('interfaces')">
+      <div class="kpi-value">84</div>
+      <div class="kpi-label">Interfaces &amp; Enhancements</div>
+      <div class="kpi-sub">41 interfaces + 43 enhancements</div>
+      <div class="kpi-hint">▸ Click to view details</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="section-icon">▶</span> SAP Activate — 5 Phases</div>
+  <div class="phase-timeline">
+    <div class="phase done">
+      <div class="phase-num">1</div><div class="phase-name">Discover</div>
+      <div class="phase-desc">Fit-to-standard workshops, initial scoping, stakeholder alignment, system demo.</div>
+      <span class="phase-status-pill pill-done">✓ Complete</span>
+      <div class="phase-progress"><div class="phase-pct">100%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:100%"></div></div></div>
+    </div>
+    <div class="phase done">
+      <div class="phase-num">2</div><div class="phase-name">Prepare</div>
+      <div class="phase-desc">Project governance, infrastructure setup, team onboarding, sandbox provisioning.</div>
+      <span class="phase-status-pill pill-done">✓ Complete</span>
+      <div class="phase-progress"><div class="phase-pct">100%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:100%"></div></div></div>
+    </div>
+    <div class="phase active">
+      <div class="phase-num">3</div><div class="phase-name">Explore</div>
+      <div class="phase-desc">Business process workshops, delta/GAP identification, parking lots resolution, backlog build.</div>
+      <span class="phase-status-pill pill-active">⚡ In Progress</span>
+      <div class="phase-progress"><div class="phase-pct">~72%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-gold" style="width:72%"></div></div></div>
+    </div>
+    <div class="phase pending">
+      <div class="phase-num">4</div><div class="phase-name">Realize</div>
+      <div class="phase-desc">Configuration, development of enhancements &amp; interfaces, unit testing, UAT execution.</div>
+      <span class="phase-status-pill pill-pending">Upcoming</span>
+      <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
+    </div>
+    <div class="phase pending">
+      <div class="phase-num">5</div><div class="phase-name">Deploy</div>
+      <div class="phase-desc">Cutover execution, data migration, GoLive, hypercare &amp; stabilization.</div>
+      <span class="phase-status-pill pill-pending">Upcoming</span>
+      <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="section-icon">▤</span> Workstream Status</div>
+  <div class="ws-grid">
+
+    <div class="ws-card" onclick="openModal('ws-pp')">
+      <div class="ws-card-header" style="border-left:4px solid #0070F2;">
+        <span class="ws-module">PP — Production Planning</span>
+        <span class="ws-badge tag-blue">31 Deltas</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Interfaces</span><span class="ws-stat-value">High volume</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">59 total</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">NCA MX integrations</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:7"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:2"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:2"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
+      </div>
+    </div>
+
+    <div class="ws-card" onclick="openModal('ws-ba')">
+      <div class="ws-card-header" style="border-left:4px solid #E8A000;">
+        <span class="ws-module">B&amp;A — Budget &amp; Analytics</span>
+        <span class="ws-badge tag-gold">39 Deltas</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Enhancements</span><span class="ws-stat-value">Largest workstream</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">65 total</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">SAC + DSP scope</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:8"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:1"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:1"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
+      </div>
+    </div>
+
+    <div class="ws-card" onclick="openModal('ws-mmim')">
+      <div class="ws-card-header" style="border-left:4px solid #107E3E;">
+        <span class="ws-module">MM-IM — Inventory Mgmt</span>
+        <span class="ws-badge tag-green">15 Deltas</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">40 total</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">12 Argentina scope</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">Granel NCA movements</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:6"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:5"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:4"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
+      </div>
+    </div>
+
+    <div class="ws-card" onclick="openModal('ws-co')">
+      <div class="ws-card-header" style="border-left:4px solid #BB0000;">
+        <span class="ws-module">CO — Controlling</span>
+        <span class="ws-badge tag-red">9 Deltas + 3 Cross</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">56 total (highest)</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">4 Argentina scope</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">Standard cost + COGM</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:6"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:3"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:3"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
+      </div>
+    </div>
+
+    <div class="ws-card" onclick="openModal('ws-mmpur')">
+      <div class="ws-card-header" style="border-left:4px solid #6A6D70;">
+        <span class="ws-module">MM-PUR — Purchasing</span>
+        <span class="ws-badge tag-grey">6 Deltas</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">18 total</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">3 Argentina scope</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Status</span><span class="ws-stat-value">Progressing</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:4"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:4"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:2"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
+      </div>
+    </div>
+
+    <div class="ws-card" onclick="openModal('ws-sd')">
+      <div class="ws-card-header" style="border-left:4px solid #E76500;">
+        <span class="ws-module">SD — Sales &amp; Distribution</span>
+        <span class="ws-badge tag-orange">3 Deltas</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">17 total</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">4 Argentina scope</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Status</span><span class="ws-stat-value">Low delta volume</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:8"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:2"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
+      </div>
+    </div>
+
+    <div class="ws-card" onclick="openModal('ws-matcluster')">
+      <div class="ws-card-header" style="border-left:4px solid #5C2D91;">
+        <span class="ws-module">Material Cluster — Situación Actual</span>
+        <span class="ws-badge" style="background:#EDE7F6;color:#5C2D91;">5 Countries</span>
+      </div>
+      <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Template Global</span><span class="ws-stat-value">MTS — Usiminas model</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Exceptions</span><span class="ws-stat-value">Centro América · Colombia</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Key issue</span><span class="ws-stat-value">Prod. vendido ≠ costeado</span></div>
+        <div class="ws-mini-bar">
+          <div class="ws-mini-seg" style="background:#5C2D91;flex:3"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-orange);flex:2"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:2"></div>
+        </div>
+        <div class="kpi-hint" style="margin-top:10px">▸ Click to view country details</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title"><span class="section-icon">▣</span> Delta / GAP Analysis</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Deltas by Status</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">Creado (Open)</span><div class="bar-track"><div class="bar-fill" style="width:74.8%;background:var(--sap-red);">80</div></div><span class="bar-count">80</span></div>
+        <div class="bar-row"><span class="bar-label">Cerrado (Closed)</span><div class="bar-track"><div class="bar-fill" style="width:17.8%;background:var(--sap-green);">19</div></div><span class="bar-count">19</span></div>
+        <div class="bar-row"><span class="bar-label">Aprobado</span><div class="bar-track"><div class="bar-fill" style="width:2.8%;background:var(--sap-blue);">3</div></div><span class="bar-count">3</span></div>
+        <div class="bar-row"><span class="bar-label">Cancelado</span><div class="bar-track"><div class="bar-fill" style="width:3.7%;background:var(--sap-grey);">4</div></div><span class="bar-count">4</span></div>
+        <div class="bar-row"><span class="bar-label">Rechazado</span><div class="bar-track"><div class="bar-fill" style="width:0.9%;background:var(--sap-orange);">1</div></div><span class="bar-count">1</span></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Deltas by Type</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">Enhancement</span><div class="bar-track"><div class="bar-fill" style="width:40.2%;background:var(--sap-blue);">43</div></div><span class="bar-count">43</span></div>
+        <div class="bar-row"><span class="bar-label">Interface</span><div class="bar-track"><div class="bar-fill" style="width:38.3%;background:var(--sap-orange);">41</div></div><span class="bar-count">41</span></div>
+        <div class="bar-row"><span class="bar-label">New Configuration</span><div class="bar-track"><div class="bar-fill" style="width:8.4%;background:var(--sap-gold);">9</div></div><span class="bar-count">9</span></div>
+        <div class="bar-row"><span class="bar-label">Report</span><div class="bar-track"><div class="bar-fill" style="width:5.6%;background:var(--sap-mid);">6</div></div><span class="bar-count">6</span></div>
+        <div class="bar-row"><span class="bar-label">Migration / Other</span><div class="bar-track"><div class="bar-fill" style="width:4.7%;background:var(--sap-grey);">5</div></div><span class="bar-count">5</span></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Deltas by Module</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">B&amp;A</span><div class="bar-track"><div class="bar-fill" style="width:36.4%;background:var(--sap-blue);">39</div></div><span class="bar-count">39</span></div>
+        <div class="bar-row"><span class="bar-label">PP</span><div class="bar-track"><div class="bar-fill" style="width:29.0%;background:var(--sap-blue);">31</div></div><span class="bar-count">31</span></div>
+        <div class="bar-row"><span class="bar-label">MM-IM</span><div class="bar-track"><div class="bar-fill" style="width:14.0%;background:var(--sap-blue);">15</div></div><span class="bar-count">15</span></div>
+        <div class="bar-row"><span class="bar-label">CO</span><div class="bar-track"><div class="bar-fill" style="width:8.4%;background:var(--sap-blue);">9</div></div><span class="bar-count">9</span></div>
+        <div class="bar-row"><span class="bar-label">MM-PUR</span><div class="bar-track"><div class="bar-fill" style="width:5.6%;background:var(--sap-blue);">6</div></div><span class="bar-count">6</span></div>
+        <div class="bar-row"><span class="bar-label">B&amp;A + CO</span><div class="bar-track"><div class="bar-fill" style="width:2.8%;background:var(--sap-blue);">3</div></div><span class="bar-count">3</span></div>
+        <div class="bar-row"><span class="bar-label">SD</span><div class="bar-track"><div class="bar-fill" style="width:2.8%;background:var(--sap-blue);">3</div></div><span class="bar-count">3</span></div>
+        <div class="bar-row"><span class="bar-label">Migracion</span><div class="bar-track"><div class="bar-fill" style="width:0.9%;background:var(--sap-blue);">1</div></div><span class="bar-count">1</span></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Parking Lots by Status</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">Cerrado</span><div class="bar-track"><div class="bar-fill" style="width:81.7%;background:var(--sap-green);">214</div></div><span class="bar-count">214</span></div>
+        <div class="bar-row"><span class="bar-label">Pendiente Cliente</span><div class="bar-track"><div class="bar-fill" style="width:12.6%;background:var(--sap-red);">33</div></div><span class="bar-count">33</span></div>
+        <div class="bar-row"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:3.4%;background:var(--sap-orange);">9</div></div><span class="bar-count">9</span></div>
+        <div class="bar-row"><span class="bar-label">Cerrado-Duplicidad</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-green);">3</div></div><span class="bar-count">3</span></div>
+        <div class="bar-row"><span class="bar-label">Aprobado</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
+        <div class="bar-row"><span class="bar-label">Cambio de alcance</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
+        <div class="bar-row"><span class="bar-label">Entregado por SAP</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="section-icon">⚠</span> Open Priority Items — GoLive Risk</div>
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-title">Priority 1 &amp; 2 Open Deltas</span>
+      <span class="tag tag-red">8 items shown — resolve before Realize phase</span>
+    </div>
+    <table>
+      <thead><tr><th>Delta ID</th><th>Module</th><th>Description</th><th>Priority</th><th>Type</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>DEL-MM-01</strong></td>
+          <td>MM-IM</td>
+          <td>Gestión de materiales</td>
+          <td><span class="tag tag-red">1 - Obligatorio</span></td>
+          <td>Reporte</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-CO-46</strong></td>
+          <td>B&amp;A + CO</td>
+          <td>Budget</td>
+          <td><span class="tag tag-gold">2 - Importante</span></td>
+          <td>Enhacement</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-MM-71</strong></td>
+          <td>MM-IM</td>
+          <td>Gestión de materiales</td>
+          <td><span class="tag tag-gold">2 - Importante</span></td>
+          <td>Interfaz</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-PP-02</strong></td>
+          <td>PP</td>
+          <td>Producción</td>
+          <td><span class="tag tag-red">1 - Obligatorio</span></td>
+          <td>Interfaz</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-B&amp;A-43</strong></td>
+          <td>B&amp;A</td>
+          <td>Budget</td>
+          <td><span class="tag tag-gold">2 - Importante</span></td>
+          <td>Nueva Configuración</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-B&amp;A-44</strong></td>
+          <td>B&amp;A</td>
+          <td>Budget</td>
+          <td><span class="tag tag-gold">2 - Importante</span></td>
+          <td>Nueva Configuración</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-B&amp;A-45</strong></td>
+          <td>B&amp;A</td>
+          <td>Budget</td>
+          <td><span class="tag tag-gold">2 - Importante</span></td>
+          <td>Interfaz</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+        <tr>
+          <td><strong>DEL-B&amp;A-51</strong></td>
+          <td>B&amp;A</td>
+          <td>Rentabilidad</td>
+          <td><span class="tag tag-gold">2 - Importante</span></td>
+          <td>Nueva Configuración</td>
+          <td><span class="tag tag-orange">Creado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="margin-top:32px"><span class="section-icon">⏳</span> Parking Lots — Pending Resolution</div>
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-title">Items Awaiting Client or SAP Response</span>
+      <span class="tag tag-orange">42 open items</span>
+    </div>
+    <table>
+      <thead><tr><th>Module</th><th>Pending Client</th><th>Pending SAP</th><th>Total Open</th><th>Priority Type</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>MM-IM</strong></td>
+          <td>11</td>
+          <td>3</td>
+          <td><span class="tag tag-red">14</span></td>
+          <td>Design Impact</td>
+        </tr>
+        <tr>
+          <td><strong>B&A</strong></td>
+          <td>3</td>
+          <td>4</td>
+          <td><span class="tag tag-orange">7</span></td>
+          <td>Config / Other</td>
+        </tr>
+        <tr>
+          <td><strong>PP</strong></td>
+          <td>6</td>
+          <td>0</td>
+          <td><span class="tag tag-orange">6</span></td>
+          <td>Design Impact</td>
+        </tr>
+        <tr>
+          <td><strong>AR-PP</strong></td>
+          <td>5</td>
+          <td>0</td>
+          <td><span class="tag tag-orange">5</span></td>
+          <td>Design Impact</td>
+        </tr>
+        <tr>
+          <td><strong>SD</strong></td>
+          <td>4</td>
+          <td>0</td>
+          <td><span class="tag tag-orange">4</span></td>
+          <td>Config / Other</td>
+        </tr>
+        <tr>
+          <td><strong>MM-PUR</strong></td>
+          <td>1</td>
+          <td>2</td>
+          <td><span class="tag tag-orange">3</span></td>
+          <td>Config / Other</td>
+        </tr>
+        <tr>
+          <td><strong>CO</strong></td>
+          <td>3</td>
+          <td>0</td>
+          <td><span class="tag tag-orange">3</span></td>
+          <td>Config / Other</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="margin-top:32px"><span class="section-icon">!</span> Key Risks &amp; Recommendations</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Top Risks</div>
+      <table style="font-size:12px">
+        <thead><tr><th>Risk</th><th>Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td>80 open deltas entering Realize with no approved solution</td><td><span class="tag tag-red">High</span></td><td>PMO</td></tr>
+          <tr><td>NCA MX interfaces (mandatory PP deltas) undefined</td><td><span class="tag tag-red">High</span></td><td>PP WS Lead</td></tr>
+          <tr><td>33 PLs pending client response — blocking configuration</td><td><span class="tag tag-orange">Medium</span></td><td>Client SMEs</td></tr>
+          <tr><td>B&amp;A SAC scope creep (enhancements out of SOW)</td><td><span class="tag tag-orange">Medium</span></td><td>B&amp;A Lead</td></tr>
+          <tr><td>CO PLs highest volume (56) — standard cost design risk</td><td><span class="tag tag-orange">Medium</span></td><td>CO WS Lead</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Recommendations for Next Sprint</div>
+      <table style="font-size:12px">
+        <thead><tr><th>#</th><th>Action</th><th>Phase</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Prioritize resolution of 21 Priority-1 deltas before Realize entry</td><td>Explore → Realize</td></tr>
+          <tr><td>2</td><td>Schedule interface design sessions for all 41 Interface-type deltas</td><td>Explore</td></tr>
+          <tr><td>3</td><td>Escalate 33 client-pending PLs in next Steering Committee</td><td>Governance</td></tr>
+          <tr><td>4</td><td>Conduct GoLive strategy session for Permanent vs Temporary GAPs</td><td>Explore</td></tr>
+          <tr><td>5</td><td>Baseline project plan in MS Project with Realize milestones</td><td>Prepare → Realize</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · November 10, 2026 · SAP Global Delivery Hub Americas
+</footer>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="handleBackdropClick(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <span class="modal-header-title" id="modal-title">Details</span>
+      <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-subtitle" id="modal-table-label">Related Items</div>
+      <div id="modal-filter-bar" class="filter-bar" style="display:none">
+        <span class="filter-bar-label">Filter by Status:</span>
+        <span id="modal-filter-pills"></span>
+        <span class="modal-count" id="modal-count"></span>
+      </div>
+      <div class="modal-table-wrap">
+        <table><thead id="modal-thead"></thead><tbody id="modal-tbody"></tbody></table>
+      </div>
+      <div class="notes-label">Notes</div>
+      <textarea class="notes-area" id="modal-notes" maxlength="500" placeholder="Add your notes here (max 500 characters)&#8230;"></textarea>
+      <div class="notes-footer">
+        <span class="char-counter" id="char-counter">500 characters remaining</span>
+        <div style="display:flex;align-items:center">
+          <span class="save-flash" id="save-flash">Saved &#10003;</span>
+          <button class="save-btn" onclick="saveNote()">Save Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CARD_DATA = {
+  'total-deltas': {
+    title: 'Total Deltas / GAPs — 107 Items',
+    tableLabel: 'All Deltas by Module',
+    headers: ['Module', 'Total Deltas', 'Open', 'Top Type'],
+    rows: [
+      ['B&amp;A','39','20','Enhacement'],
+      ['PP','31','28','Interfaz'],
+      ['MM-IM','15','14','Interfaz'],
+      ['CO','9','6','Enhacement'],
+      ['MM-PUR','6','6','Interfaz'],
+      ['B&amp;A + CO','3','2','Enhacement'],
+      ['SD','3','3','Interfaz'],
+      ['Migracion','1','1','Conversion/Migración']
+    ]
+  },
+  'open-deltas': {
+    title: 'Open Deltas (Creado) — 80 Items',
+    tableLabel: 'Open Deltas requiring resolution',
+    headers: ['Delta ID', 'Module', 'Description', 'Priority', 'Type'],
+    rows: [
+      ['DEL-MM-01','MM-IM','Gestión de materiales','1 - Obligatorio','Reporte'],
+      ['DEL-CO-38','CO','Costos','','Conversion/Migración'],
+      ['DEL-MM-39','MM-IM','Gestión de materiales','','Reporte'],
+      ['DEL-CO-46','B&amp;A + CO','Budget','2 - Importante','Enhacement'],
+      ['DEL-PP-54','PP','Producción','','Interfaz'],
+      ['DEL-MM-65','MM-IM','Gestión de materiales','3 - Deseable','Enhacement'],
+      ['DEL-MM-71','MM-IM','Gestión de materiales','2 - Importante','Interfaz'],
+      ['DEL-MM-15','MM-IM','Gestión de materiales','','Nueva Configuración'],
+      ['DEL-PP-02','PP','Producción','1 - Obligatorio','Interfaz'],
+      ['DEL-PP-03','PP','Producción','','Interfaz'],
+      ['DEL-PP-04','PP','Producción','','Interfaz'],
+      ['DEL-PP-05','PP','Producción','','Interfaz']
+    ]
+  },
+  'closed-deltas': {
+    title: 'Closed Deltas — 19 Items',
+    tableLabel: 'Resolved and closed deltas',
+    headers: ['Module', 'Count Closed', 'Status', 'Resolution Type'],
+    rows: [
+      ['B&amp;A','18','Cerrado','Agreed SAP solution'],
+      ['B&amp;A + CO','1','Cerrado','Agreed SAP solution']
+    ]
+  },
+  'mandatory-deltas': {
+    title: 'Mandatory Deltas (Priority 1) — 21 GoLive Blockers',
+    tableLabel: 'Priority 1 – must be resolved before GoLive',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+      ['DEL-MM-01','MM-IM','Gestión de materiales','Creado','Reporte'],
+      ['DEL-PP-02','PP','Producción','Creado','Interfaz'],
+      ['DEL-PP-61','PP','Producción','Creado','Interfaz'],
+      ['DEL-MM-64','Migracion','Gestión de materiales','Creado','Conversion/Migración'],
+      ['DEL-B&amp;A-70','B&amp;A','Flexibilizado','Creado','Nueva Configuración'],
+      ['DEL-B&amp;A-72','B&amp;A','Flexibilizado','Cerrado','Nueva Configuración'],
+      ['DEL-B&amp;A-78','B&amp;A','Flexibilizado','Cerrado','Reporte'],
+      ['DEL-B&amp;A-80','B&amp;A','Budget','Creado','Enhacement'],
+      ['DEL-B&amp;A-83','B&amp;A','Reportes BI','Creado','Enhacement'],
+      ['DEL-AR-CO-84','CO','Costos','Creado','Enhacement'],
+      ['DEL-AR-PP-85','PP','Producción','Creado','Interfaz'],
+      ['DEL-B&amp;A-86','B&amp;A','Flexibilizado','Creado','Nueva Configuración'],
+      ['DEL-AR-CO-87','CO','Costos','Creado','Enhacement'],
+      ['DEL-AR-CO-89','CO','Costos','Aprobado','Enhacement'],
+      ['DEL-AR-CO-90','CO','Costos','Aprobado','Enhacement'],
+      ['DEL-AR-PP-91','PP','Costos','Cancelado','Interfaz'],
+      ['DEL-AR-CO-94','CO','Costos','Aprobado','Conversion/Migración'],
+      ['DEL-BR-PP-96','PP','Producción','Creado','Conversion/Migración'],
+      ['DEL-BR-PP-96','PP','Producción','Creado','Conversion/Migración'],
+      ['DEL-B&amp;A-98','B&amp;A','Budget','Creado','Enhacement'],
+      ['DEL-B&amp;A-99','B&amp;A','Budget','Creado','Enhacement']
+    ]
+  },
+  'total-pl': {
+    title: 'Parking Lots — 262 Total',
+    tableLabel: 'Distribution across workstreams',
+    headers: ['Module', 'Total PLs', 'Closed', 'Pending Client', 'Pending SAP'],
+    rows: [
+      ['B&amp;A','65','57','3','4'],
+      ['CO','51','48','3','0'],
+      ['PP','34','28','6','0'],
+      ['MM-IM','28','14','11','3'],
+      ['AR-PP','25','20','5','0'],
+      ['MM-PUR','15','12','1','2'],
+      ['SD','13','8','4','0'],
+      ['AR-MM-IM','12','11','0','0'],
+      ['FI','5','5','0','0'],
+      ['AR-CO','4','4','0','0'],
+      ['AR-SD','4','4','0','0'],
+      ['AR-MM-PUR','3','3','0','0'],
+      ['AR-FI','2','2','0','0'],
+      ['co','1','1','0','0']
+    ]
+  },
+  'pl-closed': {
+    title: 'Parking Lots Closed — 217 (82.8%)',
+    tableLabel: 'Closed parking lots by module',
+    headers: ['Module', 'Closed', '% of Module', 'Total PLs'],
+    rows: [
+      ['B&amp;A','57','87.7%','65'],
+      ['CO','48','94.1%','51'],
+      ['PP','28','82.4%','34'],
+      ['MM-IM','14','50.0%','28'],
+      ['AR-PP','20','80.0%','25'],
+      ['MM-PUR','12','80.0%','15'],
+      ['SD','8','61.5%','13'],
+      ['AR-MM-IM','11','91.7%','12'],
+      ['FI','5','100.0%','5'],
+      ['AR-CO','4','100.0%','4'],
+      ['AR-SD','4','100.0%','4'],
+      ['AR-MM-PUR','3','100.0%','3'],
+      ['AR-FI','2','100.0%','2'],
+      ['co','1','100.0%','1']
+    ]
+  },
+  'pl-pending': {
+    title: 'Parking Lots Pending — 42 Open',
+    tableLabel: 'Items awaiting response — escalation required',
+    headers: ['Module', 'Pending Client', 'Pending SAP', 'Total', 'Risk'],
+    rows: [
+      ['MM-IM','11','3','14','High'],
+      ['B&amp;A','3','4','7','Medium'],
+      ['PP','6','0','6','Medium'],
+      ['AR-PP','5','0','5','Medium'],
+      ['SD','4','0','4','Medium'],
+      ['MM-PUR','1','2','3','Medium'],
+      ['CO','3','0','3','Medium']
+    ]
+  },
+  'interfaces': {
+    title: 'Interfaces &amp; Enhancements — 84 Items',
+    tableLabel: '41 Interface-type + 43 Enhancement-type deltas',
+    headers: ['Delta ID', 'Module', 'Description', 'Type', 'Priority'],
+    rows: [
+      ['DEL-CO-46','B&amp;A + CO','Budget','Enhacement','2 - Importante'],
+      ['DEL-PP-54','PP','Producción','Interfaz',''],
+      ['DEL-MM-65','MM-IM','Gestión de materiales','Enhacement','3 - Deseable'],
+      ['DEL-MM-71','MM-IM','Gestión de materiales','Interfaz','2 - Importante'],
+      ['DEL-PP-02','PP','Producción','Interfaz','1 - Obligatorio'],
+      ['DEL-PP-03','PP','Producción','Interfaz',''],
+      ['DEL-PP-04','PP','Producción','Interfaz',''],
+      ['DEL-PP-05','PP','Producción','Interfaz',''],
+      ['DEL-PP-06','PP','Producción','Interfaz',''],
+      ['DEL-PP-07','PP','Producción','Interfaz',''],
+      ['DEL-PP-08','PP','Producción','Interfaz',''],
+      ['DEL-PP-09','PP','Producción','Interfaz',''],
+      ['DEL-MM-10','MM-PUR','Producción','Interfaz',''],
+      ['DEL-SD-11','SD','Ventas','Interfaz',''],
+      ['DEL-PP-12','PP','Ventas','Interfaz',''],
+      ['DEL-CO-13','CO','Costos','Enhacement',''],
+      ['DEL-MM-14','MM-PUR','Gestión de materiales','Interfaz',''],
+      ['DEL-MM-16','MM-IM','Gestión de materiales','Enhacement',''],
+      ['DEL-PP-17','PP','Producción','Enhacement',''],
+      ['DEL-MM-18','MM-PUR','Gestión de materiales','Enhacement',''],
+      ['DEL-PP-19','PP','Producción','Interfaz',''],
+      ['DEL-PP-20','PP','Producción','Interfaz',''],
+      ['DEL-PP-21','PP','Producción','Interfaz',''],
+      ['DEL-PP-22','PP','Producción','Interfaz',''],
+      ['DEL-PP-23','PP','Producción','Interfaz',''],
+      ['DEL-PP-24','PP','Producción','Interfaz',''],
+      ['DEL-PP-25','PP','Producción','Interfaz',''],
+      ['DEL-PP-26','PP','Producción','Interfaz',''],
+      ['DEL-MM-27','MM-PUR','Gestión de materiales','Interfaz',''],
+      ['DEL-SD-28','SD','Ventas','Interfaz',''],
+      ['DEL-MM-29','MM-PUR','Gestión de materiales','Interfaz',''],
+      ['DEL-SD-30','SD','Ventas','Interfaz',''],
+      ['DEL-MM-31','MM-IM','Gestión de materiales','Interfaz',''],
+      ['DEL-MM-32','MM-IM','Gestión de materiales','Interfaz',''],
+      ['DEL-MM-40','MM-IM','Gestión de materiales','Enhacement',''],
+      ['DEL-B&amp;A-41','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-45','B&amp;A','Budget','Interfaz','2 - Importante'],
+      ['DEL-MM-33','MM-IM','Gestión de materiales','Interfaz',''],
+      ['DEL-CROSS-47','B&amp;A','Budget','Interfaz','2 - Importante'],
+      ['DEL-CROSS-48','B&amp;A','Budget','Interfaz','2 - Importante'],
+      ['DEL-PP-49','PP','','Interfaz','2 - Importante'],
+      ['DEL-MM-34','MM-IM','Gestión de materiales','Interfaz',''],
+      ['DEL-MM-35','MM-IM','Gestión de materiales','Interfaz',''],
+      ['DEL-MM-36','MM-IM','Gestión de materiales','Enhacement',''],
+      ['DEL-MM-37','MM-IM','Gestión de materiales','Enhacement',''],
+      ['DEL-PP-50','PP','Producción','Enhacement',''],
+      ['DEL-B&amp;A-59','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-60','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-MM-57','B&amp;A + CO','Costos','Enhacement',''],
+      ['DEL-MM-58','MM-IM','Gestión de materiales','Interfaz',''],
+      ['DEL-PP-61','PP','Producción','Interfaz','1 - Obligatorio'],
+      ['DEL-PP-62','PP','Producción','Enhacement','3 - Deseable'],
+      ['DEL-PP-63','PP','Producción','Enhacement','3 - Deseable'],
+      ['DEL-PP-69','PP','Producción','Interfaz','2 - Importante'],
+      ['DEL-B&amp;A-73','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-74','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-75','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-76','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-77','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-PP-79','PP','Producción','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-80','B&amp;A','Budget','Enhacement','1 - Obligatorio'],
+      ['DEL-CO-81','CO','','Enhacement',''],
+      ['DEL-B&amp;A-82','B&amp;A','Reportes BI','Enhacement','2 - Importante'],
+      ['DEL-B&amp;A-83','B&amp;A','Reportes BI','Enhacement','1 - Obligatorio'],
+      ['DEL-AR-CO-84','CO','Costos','Enhacement','1 - Obligatorio'],
+      ['DEL-AR-PP-85','PP','Producción','Interfaz','1 - Obligatorio'],
+      ['DEL-AR-CO-87','CO','Costos','Enhacement','1 - Obligatorio'],
+      ['DEL-AR-PP-88','PP','Producción','Interfaz','2 - Importante'],
+      ['DEL-AR-CO-89','CO','Costos','Enhacement','1 - Obligatorio'],
+      ['DEL-AR-CO-90','CO','Costos','Enhacement','1 - Obligatorio'],
+      ['DEL-AR-PP-91','PP','Costos','Interfaz','1 - Obligatorio'],
+      ['DEL-B&amp;A-92','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-93','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-95','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-97','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-98','B&amp;A','Budget','Enhacement','1 - Obligatorio'],
+      ['DEL-B&amp;A-99','B&amp;A','Budget','Enhacement','1 - Obligatorio'],
+      ['DEL-B&amp;A-100','B&amp;A','Budget','Enhacement','2 - Importante'],
+      ['DEL-B&amp;A-101','B&amp;A','Budget','Enhacement','2 - Importante'],
+      ['DEL-B&amp;A-102','B&amp;A','Budget','Enhacement','2 - Importante'],
+      ['DEL-B&amp;A-103','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-104','B&amp;A','Budget','Enhacement','3 - Deseable'],
+      ['DEL-B&amp;A-105','B&amp;A','Budget','Enhacement','2 - Importante'],
+      ['DEL-B&amp;A-106','B&amp;A','Budget','Enhacement','2 - Importante']
+    ]
+  },
+  'ws-pp': {
+    title: 'PP — Production Planning · Parking Lots',
+    tableLabel: 'All 59 Parking Lots for this workstream',
+    headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
+    rows: [
+      ['PL-MM-016','PP','020 - Maestro de materiales','Tratamiento de unidades alternativas, por impacto en interfaces','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-017','PP','020 - Maestro de materiales','Definición datos de tolerancia para las órdenes de fabricación','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-046','PP','040 - Contabilidad de Gastos Generales y Cálc','Bodega obligatorio en la BOM por desarrollo Z','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-047','PP','042 - Datos Maestros PP','Interfaz E-Minas que se está desarrollando actualmente - Impactos','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-048','PP','042 - Datos Maestros PP (II)','Pérdida por decimales','4 - Otros','1-Definición del Negocio','Cerrado'],
+      ['PL-PP-049','PP','042 - Datos Maestros PP (II)','Tratamiento de PAM en BR','4 - Otros','1-Definición del Negocio','Cerrado'],
+      ['PL-PP-050','PP','042 - Datos Maestros PP (II)','Ejemplo distribución de servicios','2 - Impacta la Configuración','1-Definición del Negocio','Cerrado'],
+      ['PL-PP-052','PP','042 - Datos Maestros PP (II)','Definición consumo de actividades','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-PP-053','PP','042 - Datos Maestros PP (II)','Definición consumo de materiales','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-055','PP','043 - Fabricación','Definir si hay interfaz con Edificios metálicos o se utlizará el poceso std','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-056','PP','043 - Fabricación','Definir si hay interfaz en Ferropak o se utlizará el poceso std de SAP','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-057','PP','043 - Fabricación','Cruzar cada sistema con las características del material cluster que se uti','6 - Impacta el Diseño interfaces','1-Definición del Negocio','Cerrado'],
+      ['PL-PP-058','PP','043 - Fabricación','Definir clases de ordenes de producion','9 - Realize: Impacto Alto','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-059','PP','043 - Fabricación','Código de lote - límite 10 carácteres','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-099','PP','Reuniones de interfaces (2/3)','Asegurar el balance de masas con NCA y maquila no sea todo Cierre metálico','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-113','PP','Reuniones NCA (9/3)','PP - Abrir si corresponde','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-117','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-118','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-119','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-120','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-121','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-122','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-123','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-124','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-125','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-126','PP','Reunion NCA (11/3)','Detallar tratamiento a realizar a los movimientos 321 para los casos en que','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-128','PP','Reunion EF de Interfaces (10/3)','Definición funcional de la rutina para determinar el valor de las caracterí','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-134','PP','Reunion NCA (26/3)','Split de producciones - Definir lógica para determinar el material cluster ','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-151','PP','Etapa Realización','Que caracteristicas de material cluster son obligatorias o no','8 - Impacta en EF Interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-165','PP','Reunion NCA Granel (4/5)','Definir código de material único a utilizar en interfaz de NCA Lotificados ','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-PP-166','PP','Reunion NCA Granel (4/5)','Se debe definir como determinar el material en el movimiento 871 de NCA. Es','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-PP-167','PP','Reunion NCA Granel (4/5)','Revisar movimiento 2 de NCA Granel, para definir si debe ser tratado en la ','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-PP-168','PP','Reunión Casos indentificados NCA (4/5)','Determinación de las características del material cluster para los movimien','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-AR-PP-174','AR-PP','AR020 - Maestros de materiales','Producciones de la fase líquida que se cargan manualmente. Como se registra','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-PP-183','AR-PP','AR043 - Fabricación','Verificar anulación masiva de Cierre Tecnico y Cierre Comercial','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-184','AR-PP','AR090 - Interfaces','Verificar extracción de NCA Argentina','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-185','AR-PP','AR090 - Interfaces','Confirmar si existe la &quot;Maquila a cliente&quot;','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-186','AR-PP','AR090 - Interfaces','Como el SGL registra el grado de acero a la salida del convertidor y como l','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-AR-PP-187','AR-PP','AR090 - Interfaces','SGL Argentina - Revision de la información de consumos','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-AR-PP-188','AR-PP','AR090 - Interfaces','Generar reunión para revisar procesos de producción en S/4Hana','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-189','AR-PP','AR090 - Interfaces','Para los consumos de otros materiales de la BOM, confirmar relacion en NCA ','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-190','AR-PP','AR090 - Interfaces','Que tratamiento debe darse a las producciones de Embalaje de NCA en Argenti','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-191','AR-PP','AR090 - Interfaces','Tratamiento del 137','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-192','AR-PP','AR090 - Interfaces','No todas las líneas tienen el cierre metálico','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-AR-PP-193','AR-PP','AR090 - Interfaces','Evaluar el tratamiento de agrupacion / particion de lotes en Argentina','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-PP-194','AR-PP','AR090 - Interfaces','Evaluar el tratamiento de la Rectificación de producción','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-MM-205','AR-PP','AR090 - Interfaces','Analizar movimientos RCL','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-206','AR-PP','AR090 - Interfaces','Analizar movimientos 899','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-207','AR-PP','AR090 - Interfaces','Analizar movimientos 844','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-208','AR-PP','AR090 - Interfaces','Analizar movimientos 179 para difererencia entre devolución de cliente e in','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-209','AR-PP','AR090 - Interfaces','Analizar movimiento 124 y su impacto y tratamiento.','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-210','AR-PP','AR090 - Interfaces','Analizar movimiento 184 y 198','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-213','AR-PP','AR090 - Interfaces','Revisar movimiento de producción 136 para QNX &quot;Viejo&quot; y su impact','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-214','AR-PP','AR090 - Interfaces','Diferencia entre peso bruto y peso neto de un lote. Ejemplo: caso Manguito','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-215','AR-PP','AR090 - Interfaces','Mov. 876 - Maquila. Revisar equivalencia para movimiento NCA Argentina (pos','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-216','AR-PP','AR090 - Interfaces','Mov. 872. Se utiliza en ambas sociedades para movimientos diferentes. Enten','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-217','AR-PP','AR090 - Interfaces','Revisión de líneas manuales y sus procesos.','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-AR-MM-218','AR-PP','AR090 - Interfaces','Partición/Agrupación de lotes. Revisar casos de impacto para Argentina. Mov','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-PP-243','PP','WSBR043 – Producción por Procesos','Proceso de Piso de planta  --&gt; MES  --&gt;. S/4HANA - Custo standard no ','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente']
+    ]
+  },
+  'ws-ba': {
+    title: 'B&amp;A — Budget &amp; Analytics · Parking Lots',
+    tableLabel: 'All 65 Parking Lots for this workstream',
+    headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
+    rows: [
+      ['PL-CO-042','B&amp;A','040 - Contabilidad de Gastos Generales y Cálc','Cálculo de precio de segunda como un porcentaje en base a primera','4 - Otros','3-Otros','Cerrado'],
+      ['PL-PP-051','B&amp;A','042 - Datos Maestros PP (II)','Nuevo material cluster, luego de cerrado el Budget','4 - Otros','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-090','B&amp;A','A021 - SGR Gastos generales, semifijos','Definiciones relacionadas con el calculo de precio','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-091','B&amp;A','A021 - SGR Gastos generales, semifijos','Definición Ajuste de capacidad','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['','B&amp;A','Organizar reunion una vez finalizados los WS.','Revisar uso de estándares por lote y SKU​','1 - Impacta el Diseño','3-Otros','Cerrado'],
+      ['PL-PP-110','B&amp;A','Reuniones NSE (6/3)','Definir como se hace la relación entre Material Cluster en SAP y SKU en la ','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-PP-111','B&amp;A','Reuniones NSE (6/3)','Definir como se convierte la PAM devuelta por NSE en un código de materia c','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-112','B&amp;A','WSA043 - Planificación Costos del producto (d','Definición subrepartos cuentas secundarias','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-114','B&amp;A','WSA044 - Budget Revisión Procesos','Indicar los estados de proyectos','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-115','B&amp;A','WSA044 - Budget Revisión Procesos','Ejemplo precio de contratos','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-116','B&amp;A','Budget','Definición de ejecución y  liberacion de costo estandar','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado-Duplicidad'],
+      ['PL-B&amp;A-127','B&amp;A','WSA031- Flexibilizado (12/03)','Confirmar si se necesita Segunda Corrida par la generación de Volumen para ','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL_B&amp;A-130','B&amp;A','WSA034 - Flexibilizado (18/3)','Definir corrida REAL, FIFO en BTP a nivel de grupo (BU/PU)','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL_B&amp;A-131','B&amp;A','WSA034 - Flexibilizado (18/3)','Definición Real a Precio Std','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL_B&amp;A-132','B&amp;A','WSA061- Rentabilidad (20/3)','Definición distribución de variación de precios','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL_B&amp;A-133','B&amp;A','WSA061- Rentabilidad (20/3)','Definición de margenes a construir','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-135','B&amp;A','WSA070 - Overview Reportes','Definición de unidad de medida para gestión de reportes','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-136','B&amp;A','','Llevar todo managerial a estándar','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-137','B&amp;A','WSA-012 06/03','En funcion de las Alternativas que se presenten para creacion y modificacio','5 - Realize: Impacto Bajo','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-140','B&amp;A','WSA072 - GG,SF &amp; Reportes (6/4)','Definir gestión del real para real proyectado en SGR y gestión','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-141','B&amp;A','WSA072 - GG,SF &amp; Reportes (6/4)','Definir cuales son las reglas de sustitución de cuenta para los materiales ','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-142','B&amp;A','','Definición granularidad para budget','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-143','B&amp;A','Reunión dudas calculador de estandares para B','Definición calculador de estandares para Budget y Flex','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-144','B&amp;A','WSA072- Budget Proyectos REX &amp; Reportes (','Definición tabla donde se encuentran las ubicaciones técnicas','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-145','B&amp;A','WSA072- Budget Proyectos REX &amp; Reportes (','Definir / Indicar la jerarquia de PU a usar en BTP','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-146','B&amp;A','WSA073-Budget Costo de Producto &amp; Reporte','Crear ejemplo en base a  hora maquina para budget costos de producto','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-149','B&amp;A','WSA075 - Budget GDV &amp; Reportes (10/4)','Definir nivel de detalle requerido para fletes budget y en real indicar de ','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-150','B&amp;A','WSA075 - Budget GDV &amp; Reportes (10/4)','Definir métrica de stock inicial para inicio de PEA en el costo de venta','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-152','B&amp;A','Reunión entendimiento Flex y Rentabilidad','Se requiere conocer el detalle de la poliza a contabilizar en S4 , derivada','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-153','B&amp;A','Reunión entendimiento Flex y Rentabilidad','Se necesita identificar como tomar la informacion de SGL para los Flexibili','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-154','B&amp;A','WSA076 - Flexibilizado','Completar ejemplo de &quot;Precio a ultima compra&quot; enviado por SAP','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-155','B&amp;A','WSA078- Rentabilidad','Completar archivo excel compartido en sesión por SAP','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-156','B&amp;A','WSA076 - Flexibilizado','Archivos de muestra de como se tiene la informacion de SGL y el sistema est','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-157','B&amp;A','WSA077-Reportes','Definir como se determina si un centro de costo es de mantenimiento o servi','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-158','B&amp;A','WSA077-Reportes','Agendar reunión para explicación de archivo de salida que generan los desar','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-160','B&amp;A','Costos de producto','Agendar sesión para manejo de Lineas de Servicio','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-161','B&amp;A','Flexibilizado','Definir el proceso de conversión de moneda (detalle tasa de conversión y mo','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-162','B&amp;A','','Definición de cómo se ve en S4 los costos de Embalaje, Despacho y Almacenaj','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-164','B&amp;A','TX - Costos - Consumo Real de Actividades','Segun lo revisado y enviado de la fuente SGL se requiere reunion para : *Ve','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado-Duplicidad'],
+      ['PL-B&amp;A-165','B&amp;A','Calculador estándares por Cluster','En reunion del dia de hoy se informo que FLEX debia hacer planificacion ser','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-219','B&amp;A','Validación REX - 18/9/26','Usuarias solicitan tener dimensión  Actividad','2 - Impacta la Configuración','1-Definición del Negocio','Cerrado'],
+      ['PL-B&amp;A-220','B&amp;A','Validación REX - 18/9/26','Usuarias solicitan un unico archivo de carga para todos los tipos de presup','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-221','B&amp;A','Validación REX - 18/9/26','Usuarias solicitan un unico reporte donde se visualicen todos los presupues','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-222','B&amp;A','Validación REX - 18/9/26','Usuarias indican que no requieren utilizar Centro de Costo para REX','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-223','B&amp;A','Validación REX Sesión II- 28/09/26','Usuarias solicitan incluir proceso de borrado en planificación','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-224','B&amp;A','Validación REX Sesión II- 28/09/26','Usuarias solicitan validaciones en carga archivo plano','2 - Impacta la Configuración','2-Definición para Configurar','Cambio de alcance'],
+      ['PL-B&amp;A-225','B&amp;A','Validación REX Sesión II- 28/09/26','Usuarias solicitan que usuarios finales ejecuten menor cantidad de botones','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-226','B&amp;A','Validación REX Sesión III- 01/10/26','Usuarias solicitan que se identifique la version por sociedad para la valor','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-227','B&amp;A','Validación REX Sesión III- 01/10/26','Cuando se ejecute la valorización de precios, el usuario no seleccione cual','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-228','B&amp;A','Validación REX Sesión III- 01/10/26','Usuarias indican que la parte de polinomica debería afectar el presupuesto','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-229','B&amp;A','Validación REX Sesión III- 01/10/26','La parte de descalce deberia afectar el presupuesto','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-230','B&amp;A','Validación REX Sesión III- 01/10/26','Usuarias solicitan calculos de proyección diferentes a los especificados en','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-231','B&amp;A','Validación REX Sesión III- 01/10/26','Inclusion de derivación de cuenta para planificación de Material en la part','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-B&amp;A-232','B&amp;A','REX Directores Tx- 02/10/26','Look&amp;feel historias en SAC','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-233','B&amp;A','REX Directores Tx- 02/10/26','Revisión posibilidades de No Scroll a la derecha','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-234','B&amp;A','REX Directores Tx- 02/10/26','Oportunidades de AI: En curso Georgina/Veronica','4 - Otros','3-Otros','Cerrado'],
+      ['PL-B&amp;A-245','B&amp;A','Taller validacion Costos SF y GG (26/10)','Filtro de jerarquia de centros de costo','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-246','B&amp;A','Taller validacion Costos SF y GG (26/10)','Desbloquear Fecha de presupuesto','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-247','B&amp;A','Taller validacion Costos SF y GG (26/10)','Subrubro resto SF en KPI&#39;s','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-248','B&amp;A','Taller validacion Costos SF y GG (26/10)','Conversión de monedas automatica','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-260','B&amp;A','Taller validacion Costos SF y GG (28/10)','Incluir botón de Eliminar en ajustes de variaciones','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-261','B&amp;A','Taller validacion Costos SF y GG (29/10)','Iconos a usar en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-B&amp;A-262','B&amp;A','Show &amp; Tell Mano de Obra (30/10)','Simplificación de pasos en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-B&amp;A-263','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Data analyzer con todo el nivel de detalle del Real','2 - Impacta la Configuración','3-Otros','Cerrado'],
+      ['PL-B&amp;A-264','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Reporte BI que permita la visualización hasta nivel de proyecto','2 - Impacta la Configuración','3-Otros','Cerrado']
+    ]
+  },
+  'ws-mmim': {
+    title: 'MM-IM — Inventory Mgmt · Parking Lots',
+    tableLabel: 'All 40 Parking Lots for this workstream',
+    headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
+    rows: [
+      ['PL-EO-006','MM-IM','010 - Estructura Organizativa','Confirmar listado de Centros Logisticos/Productivos','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-EO-007','MM-IM','010 - Estructura Organizativa','Tema de manejo de lote por centro','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-EO-008','MM-IM','010 - Estructura Organizativa','Definición de estructura de almacenes (con impacto centros)','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-EO-009','MM-IM','010 - Estructura Organizativa','Definición tratamiento de stock negativo','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-013','MM-IM','020 - Maestro de materiales','Definición de Tipos de Materiales del proceso','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-014','MM-IM','020 - Maestro de materiales','Definición de grupos de artículos','9 - Realize: Impacto Alto','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-015','MM-IM','020 - Maestro de materiales','Definición UMB y UMA','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-044','MM-IM','040 - Contabilidad de Gastos Generales y Cálc','Consultas sobre reportería standard de Stock y Tránsito','4 - Otros','3-Otros','Cerrado'],
+      ['PL-MM-045','MM-IM','040 - Contabilidad de Gastos Generales y Cálc','Cambio de característica del lote de Semielaborado o Terminado','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-PP-060','MM-IM','043 - Fabricación','Consumo de materias primas  Factibilidad interfaz y utilización de la orden','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-101','MM-IM','020 - Maestro de materiales','Análisis de impacto por definición UMB y UMA','4 - Otros','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-CO-103','MM-IM','Reuniones de interfaces (3/3)','Como se identifica en los movimiento 135 y 136 de NCA que es una partición ','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-105','MM-IM','Reuniones de interfaces (4/3)','Confirmar que son en NCA los movimientos 135 / 136 de las lineas recuperado','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-106','MM-IM','Reuniones de interfaces (4/3)','Analizar 01EMB (136???)','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-107','MM-IM','Reuniones de interfaces (4/3)','Entender las diferencias entre 179, 182, 890 y 892','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-EO-169','AR-MM-IM','AR010 - Estructura organizativa','Confirmar lista de centros logísticos no productivos','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-EO-170','AR-MM-IM','AR010 - Estructura organizativa','Homologar tratamiento de traslados entre plantas con MX (Movimientos 152 y ','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-MM-175','AR-MM-IM','AR020 - Maestros de materiales','Lista de tipos de materiales que están actualmente en uso para Argentina','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-MM-176','AR-MM-IM','AR020 - Maestros de materiales','Revisión de la gestión de los materiales MRO que pasan de S/2 a V/2.','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-177','AR-MM-IM','AR020 - Maestros de materiales','Confirmar los tipos de materiales cluster, por si hubiera alguno adicional','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-MM-178','AR-MM-IM','AR020 - Maestros de materiales','Compartir los valores definidos para cada una de las características de los','4 - Otros','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-MM-179','AR-MM-IM','AR020 - Maestros de materiales','Evaluar y analizar impacto de las características de definición de Material','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-180','AR-MM-IM','AR020 - Maestros de materiales','Analizar impacto en 15 millones la definición de los materiales de compra d','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-181','AR-MM-IM','AR020 - Maestros de materiales','Revisión de las reglas para determinación de los materiales S/3 y V/2','4 - Otros','3-Otros','Cerrado'],
+      ['PL-AR-MM-199','AR-MM-IM','AR110 - Impacto en compras','Revisar proceso de baja a consumo interno y alta con X61 (Mov NCA 362 / 157','1 - Impacta el Diseño','1-Definición del Negocio','Aprobado'],
+      ['PL-AR-MM-203','AR-MM-IM','AR110 - Impacto en compras','Evaluar impacto de cambio de precio de S/2 a V/2 o S/3 en desarrollos de Ar','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-204','AR-MM-IM','AR110 - Impacto en compras','Verificar tratamiento de almacén en los traslados que se resuelven por orde','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-235','MM-IM','AR110 - Impacto en compras','Uso de org de compras para la generación de STOs entre plantas','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-EO-236','MM-IM','WSBR010-Estructura Organizativa','Confirmación de los centros en alcance para cada paíse de la 3r fase','3 - Impacto Organizacional','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-239','MM-IM','WSBR020-Maestro de Materiales','Confirmación de los tipos de material por pais','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-240','MM-IM','WSBR020-Maestro de Materiales','Impacto del costo de flete en el proceso de traslado de material entre plan','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-241','MM-IM','WSBR020-Maestro de Materiales','Manejo de la estrategia para el uso de Material Cluster en cada país','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-BR-AMI-MM-250','MM-IM','WSBR110-Impacto en compras y traslados','Verificar si los materiales ya cumplen con el control de precio y no sufren','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-251','MM-IM','WSBR110-Impacto en compras y traslados','Confirmar que Exitos este contemplado el ajuste de precios para todos los p','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-256','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de transportacion, importación para EU, CentroAmeri','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado-Duplicidad'],
+      ['PL-BR-AMI-MM-257','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gatos de transportacion, importación para EU, CentroAmeric','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente SAP'],
+      ['PL-BR-AMI-MM-258','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de flete para los traslados entre plantas, gestiona','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente SAP'],
+      ['PL-BR-AMI-MM-259','MM-IM','WSBR110-Impacto en compras y traslados','Envio de meetin para revisar el proceso de traslados, maquila en EU','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente']
+    ]
+  },
+  'ws-co': {
+    title: 'CO — Controlling · Parking Lots',
+    tableLabel: 'All 56 Parking Lots for this workstream',
+    headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
+    rows: [
+      ['PL-MM-021','CO','021 - Maestro de materiales (II)','Categoria de valoración y cuentas de movimientos de materiales','9 - Realize: Impacto Alto','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-022','CO','021 - Maestro de materiales (II)','Definición Control de Precios y determinación de precios','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-023','CO','021 - Maestro de materiales (II)','Evaluar impacto en desarrollos actuales por el cambio de S2 a V2 (MRO)','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-024','CO','021 - Maestro de materiales (II)','Evaluar impacto en desarrollos or el cambio de S2 a S3 (Lo que no es MRO)','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-025','CO','021 - Maestro de materiales (II)','Definir los valores para Clase de aprovisionamiento especial para el cálcul','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-026','CO','021 - Maestro de materiales (II)','Tamaño de lote para calculo de costo de los materiales','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-027','CO','021 - Maestro de materiales (II)','CeBes asociados a los materiales','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-028','CO','021 - Maestro de materiales (II)','Definición de tratamiento de Subproducto y Co-Producto','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-029','CO','021 - Maestro de materiales (II)','Crear en análisis de reprocesos como una ruta separada','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-030','CO','030 - Datos maestros de contabilidad y costos','Definición cuentas contables OBYC','9 - Realize: Impacto Alto','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-CO-031','CO','030 - Datos maestros de contabilidad y costos','Definición cuentas secundarias','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-032','CO','030 - Datos maestros de contabilidad y costos','Definición de las actividades','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-033','CO','030 - Datos maestros de contabilidad y costos','Definición de los valores estadisticos','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-034','CO','030 - Datos maestros de contabilidad y costos','Definición tratamiento de REX como una actividad','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-035','CO','040 - Contabilidad de Gastos Generales y Cálc','Definición elementos de costos','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-036','CO','040 - Contabilidad de Gastos Generales y Cálc','Definición de grupos de origenes','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-037','CO','040 - Contabilidad de Gastos Generales y Cálc','Definición de variante de costeo','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-038','CO','040 - Contabilidad de Gastos Generales y Cálc','Tratamiento de fletes','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-039','CO','0410 - Contabilidad de Gastos Generales y Cál','Cecos para Convertidores Brasil','2 - Impacta la Configuración','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-040','CO','040 - Contabilidad de Gastos Generales y Cálc','Centro Maquiladores','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-041','CO','040 - Contabilidad de Gastos Generales y Cálc','Tratamiento de 11M','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-043','CO','040 - Contabilidad de Gastos Generales y Cálc','Definir tipo de esquema de estratificación de costos (de fabricación o prim','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-054','CO','040 - Contabilidad de Gastos Generales y Cálc','Tratamiento de fletes','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-067','CO','WS 050 - Cierre de período - Centro','Definir método de asignación entre centros de costos','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-068','CO','WS 060 - Cálculo de costo real','Definición de utilización o no de la cuena COC','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-069','CO','WS 060 - Cálculo de costo real','Definición motivos modificaciones de precios','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-070','CO','WS 070 - Cálculo de costo FIFO','Movimientos de material que deben afectar al cálculo de FIFO','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-071','CO','WS 070 - Cálculo de costo FIFO','Impacto de los gastos asociados en las compras','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-072','CO','Fletes','Liquidación al material desde Sistema de Letra','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-082','CO','Reuniones de interfaces (25/2)','Definir centro de costo para los movimientos 170 y 171 y 124 de NCA','6 - Impacta el Diseño interfaces','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-083','CO','Reuniones de interfaces (25/2)','Definir tratamiento de los 124 que van a la orden de producción.','6 - Impacta el Diseño interfaces','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-084','CO','100 - Data Migration','Definición referentes para la ejecución de Migration Cockpit.','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-085','CO','100 - Data Migration','Confirmación de los objetos de migración.','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-086','CO','100 - Data Migration','Identificar otros datos a migrar (No Migration Cockpit).','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-087','CO','100 - Data Migration','Definiciones relacionadas a la creación del proyecto de migración.','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-088','CO','100 - Data Migration','Definiciones relacionadas a la creación del proyecto de migración.','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-092','CO','100 - Data Migration (II)','Definición datos de carga: &quot;Producto&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-093','CO','100 - Data Migration (II)','Definición datos de carga: &quot;Producto: ampliar registros&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-094','CO','100 - Data Migration (II)','Definición datos de carga: &quot;Versión de Producción&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-095','CO','100 - Data Migration (II)','Definición datos de carga: &quot;Saldo de inventario de material&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-096','CO','100 - Data Migration (II)','Definición datos de carga: &quot;BOM&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-097','CO','100 - Data Migration (II)','Definición datos de carga: &quot;Centro de Trabajo/Recurso&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-098','CO','100 - Data Migration (II)','Definición datos de carga: &quot;Enrutamiento&quot;','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-102','CO','Reuniones de interfaces (3/3)','Definir si la imputacion contable del 551 es válida para los movimientos de','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-104','CO','Reuniones de interfaces (3/3)','Se asume que el movimiento 311 en SAP que surge de particion de lotes, siem','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-129','co','41 - WS  Contabilidad de Gastos Generales y B','Definir alternativa de solución para el cálculo de costo Budget BTP/Estánda','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-138','CO','Etapa Realización','Definición motivos modificaciones de precios','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-147','CO','Etapa Realización','OKEW: Asignación del esquema de partición a los centros de costo directos','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-148','CO','Etapa Realización','Elemento de costos&#39; y &#39;Grupo de origen&#39; para los materiales V/2','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-CO-163','CO','Etapa Realización','Cuentas para grupos de cuentas de actividades','5 - Realize: Impacto Bajo','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-EO-173','AR-CO','AR030 - Datos maestros contables','Ajustar slides de presentaciones para que no esté REX y comentario de Minas','4 - Otros','3-Otros','Cerrado'],
+      ['PL-AR-MM-182','AR-CO','AR040 - Calculo de costos std y gastos genera','Confirmar que los elementos de costo definidos en el Template Global cubren','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-211','AR-CO','AR050 - Cierre de período - Centro','Armar ejemplo en sistema para distribucion con valores estadísticos','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-MM-212','AR-CO','AR060 - Cálculo de costo real','Volumetría de materiales cluster','1 - Impacta el Diseño','3-Otros','Cerrado'],
+      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-CO-242','CO','WSBR040 –  Cálculo de Costo Estándar y Contab','campo ZZPRECOSTD','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente']
+    ]
+  },
+  'ws-mmpur': {
+    title: 'MM-PUR — Purchasing · Parking Lots',
+    tableLabel: 'All 18 Parking Lots for this workstream',
+    headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
+    rows: [
+      ['PL-EO-010','MM-PUR','010 - Estructura Organizativa','Revisión de proceso de compras','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-EO-011','MM-PUR','010 - Estructura Organizativa','Revisión de proceso de compras  - Mat. Cluster','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-018','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Dispersión','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','4 - Otros','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-MM-020','MM-PUR','020 - Maestro de materiales','Impacto de cambio de código de material en países con PP y Ventas implement','4 - Otros','2-Definición para Configurar','Pendiente Cliente'],
+      ['PL-PP-061','MM-PUR','020 - Maestro de materiales','','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-CO-073','MM-PUR','020 - Maestro de materiales','Material Cluster - Lista de valores','9 - Realize: Impacto Alto','1-Definición del Negocio','Cerrado'],
+      ['PL-MM-074','MM-PUR','110 - Impactos del Proceso de Compras','Identificar impacto en planchones de separar codigos de material por provee','7 - Impacta en Diseño + Interfaces','1-Definición del Negocio','Cerrado'],
+      ['PL-MM-075','MM-PUR','110 - Impactos del Proceso de Compras','Identificar impacto en rollos de separar codigos de material por caracteris','7 - Impacta en Diseño + Interfaces','1-Definición del Negocio','Cerrado'],
+      ['PL-MM-076','MM-PUR','110 - Impactos del Proceso de Compras','Analizar propuesta de delta para los costos indirectos de importaciones','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-079','MM-PUR','110 - Impactos del Proceso de Compras','Evaluación de impactos en Exiros por cambio de V a S','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-080','MM-PUR','110 - Impactos del Proceso de Compras','Verificar si hay maquila fuera de la de acero que no se trate por subcontra','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-081','MM-PUR','Reuniones de interfaces (25/2)','Modelo de movimientos y compras entre Tenigal y TM01','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-MM-159','MM-PUR','interfaces NCA','Tratamiento de Elemento PEP en NCA (falta de guiones)','8 - Impacta en EF Interfaces','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-200','AR-MM-PUR','AR110 - Impacto en compras','Costos indirectos asociados a la compra de materiales importados','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-201','AR-MM-PUR','AR110 - Impacto en compras','En el DEL-MM-37 se hace referencia a tenern un unico almacen que represente','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-MM-202','AR-MM-PUR','AR110 - Impacto en compras','En la compra nacional con proveedor logístico el costo de flete no está asi','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP']
+    ]
+  },
+  'ws-sd': {
+    title: 'SD — Sales &amp; Distribution · Parking Lots',
+    tableLabel: 'All 17 Parking Lots for this workstream',
+    headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
+    rows: [
+      ['PL-EO-012','SD','010 - Estructura Organizativa','Impacto material cluster en Ventas','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-062','SD','WS 045 - Impactos del Proceso de Ventas','Interface de venta de Edificios metálicos','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-063','SD','WS 045 - Impactos del Proceso de Ventas','Interfaces con E-Minas','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-064','SD','WS 045 - Impactos del Proceso de Ventas','Interface de venta de subproducto','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-065','SD','WS 045 - Impactos del Proceso de Ventas','Proceso MTO','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-066','SD','WS 045 - Impactos del Proceso de Ventas','Contabilización de costo de ventas','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-100','SD','Reuniones de interfaces (2/3)','Confirmar que movimientos NCA corresponden a cada tipo de devolucion / canc','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-SD-109','SD','Reuniones de interfaces (5/3)','Las ventas maritimas con facturacion anticipada no deben tomarse el 151','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Cerrado'],
+      ['PL-AR-SD-195','AR-SD','A045 - Impactos del Proceso de Ventas','Impacto de interfaz de sistemas de ventas a FPS','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-SD-196','AR-SD','A045 - Impactos del Proceso de Ventas','Revisar proceso de Liquido Producto e impactos en interfaz o reporting','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-SD-197','AR-SD','A045 - Impactos del Proceso de Ventas','Proceso de consignación a definir','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-AR-SD-198','AR-SD','A045 - Impactos del Proceso de Ventas','Confirmar lista de movimientos NCA asociados a la Venta','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
+      ['PL-BR-AMI-SD-244','SD','WSBR045 Costo de Venta','Identificar las voces originarias para rastrear el origen de un material. (','4 - Otros','3-Otros','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-252','SD','WSBR045 Costo de Venta','Centros de beneficio en materiales de AMI','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-253','SD','WSBR045 Costo de Venta','Determinación de cuentas en OBYC para mov. 601 SM','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-254','SD','WSBR045 Costo de Venta','Determinación de categorías de valoración','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-255','SD','WSBR045 Costo de Venta','Intercompany, Consignación y otros escenarios confirmar alcance y validar p','1 - Impacta el Diseño','1-Definición del Negocio','Entregado por SAP']
+    ]
+  },
+  'ws-matcluster': {
+    title: 'Material Cluster — Situación Actual por País',
+    tableLabel: 'Estado de implementación del template global de Material Cluster',
+    headers: ['País / Región', 'Situación Actual', 'Template Global', 'Solución Usiminas', 'Next Step'],
+    rows: [
+      ['Brasil','SD y PP implementado + modelo anterior costo real.','No aplica a Brasil   No aplica a Brasil... Brasil ya tenie la abertura de los materiales que GLOBAL necesita','N/A no necesita, sus materiales ya cuemplen con el criterio del template global','Adicionar a las características ruta y proveedor en sus materiales ya existentes y revisar configuraciones en caso haya que homologar (comparar Brasil y México). Cerrar parking lots y enviar BPD para firma.'],
+      ['Centro América','SD y PP implementado.','No es posible implementar el template global definido en Explore por escenario material cluster. El código definido para producir incluye la ruta, sin embargo, la ruta de producción que se seguirá no se conoce al momento de cargar la orden de ventas (brecha 3 producto vendido ≠ producto costeado).','Centro América no tiene trazabilidad del material producido y vendido, por lo tanto, no puede implementar la solución de Usiminas.  Hacer Usiminas material cluster más sencillo sin ruta completa solo línea productiva, no entra ruta ni proveedor en sus caracteristica','PL: revisar si hace falta abrir los materiales cluster por línea productiva o si la información actual del centro del que sale la venta es suficiente. (Jorge y Luis)  Si Se va implementar Product Costing sin la granularidad que el template exige a nivel de material   - Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
+      ['Colombia','SD y PP implementado.','No es posible implementar el template global definido en Explore por escenario material cluster. El código definido para producir incluye la ruta, sin embargo, la ruta de producción que se seguirá no se conoce al momento de cargar la orden de ventas (brecha 3 producto vendido ≠ producto costeado).','Finalizar prueba en WS. Se agenda una siguiente reunión','Enfocarnos en la siguiente sesión wn la  prioridad de material cluster.  Si Se va implementar Product Costing  Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
+      ['USA Shreveport','SD y PP no implementado. Trabajan con interfaces (NCA lite). Escenario similar a MX y AR.','Si aplica template Global','N/A - Va por Solucion Mexico y Argentina  Sería lo mismo que colombia pero añade un paso más .','Compra de colombia y sigue produciendo, desde colombia se tiene el lote.  Si Se va implementar Product Costing  - Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
+      ['USA Huston','','','','Entra en el mismo modelos de colombia. Desde colombia hya una venta de material a Houston, orden de venta y orden de compra, hay que saber si hay costo de transferencia por la compra y venta y como son tratados estos costos. - Hace falta WS Interfaces y Migración  - Cerrar parking lots y enviar BPD para firma.'],
+      ['Centro América / USA','Producto Vendido ≠ Producto Costeado&quot; y Estrategia de Venta','Excepción Centro América: Dado que Centro América no posee trazabilidad del material producido y vendido, no puede aplicar la solución Usiminas; se acordó validar no implementar costos de producción para esa región','',''],
+      ['Centro América / USA','Codificación del Acero y Apertura por Proveedor de Origen','No se tiene  apertura la codificación por Proveedor de Origen (México, Brasil, Argentina, Terceros) e integrando las 10 características técnicas clave (Ruta, Producto, Forma, Capa, Esquema, Proveedor, Grado, Quality Level, GpoEspesor, GpoAncho','',''],
+      ['BRASIL','Salidas por Ventas Masivas Desacopladas del Módulo SD','Make to Order (MTO): Se conserva como flujo estándar SAP SD únicamente para productos configurados a la medida de clientes específicos (ej. rollout Brasil)','','']
+    ]
+  }
+};
+
+const WS_CARDS = new Set(['ws-pp','ws-ba','ws-mmim','ws-co','ws-mmpur','ws-sd']);
+const STATUS_COL = 6;
+let currentCardId = null;
+let currentRows = [];
+let activeFilter = 'all';
+
+function openModal(cardId) {
+  const data = CARD_DATA[cardId];
+  if (!data) return;
+  currentCardId = cardId;
+  currentRows = data.rows;
+  activeFilter = 'all';
+  document.getElementById('modal-title').textContent = data.title + ' (' + data.rows.length + ' items)';
+  document.getElementById('modal-table-label').textContent = data.tableLabel;
+  const thead = document.getElementById('modal-thead');
+  thead.innerHTML = '<tr>' + data.headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+  const filterBar = document.getElementById('modal-filter-bar');
+  if (WS_CARDS.has(cardId)) {
+    const statuses = [...new Set(data.rows.map(r => r[STATUS_COL]).filter(Boolean))].sort();
+    const counts = {};
+    statuses.forEach(s => { counts[s] = data.rows.filter(r => r[STATUS_COL] === s).length; });
+    const pillsEl = document.getElementById('modal-filter-pills');
+    pillsEl.innerHTML =
+      "<button class=\"filter-pill active\" data-status=\"all\" onclick=\"setFilter('all')\">All <span class=\"pill-count\">" + data.rows.length + "</span></button>" +
+      statuses.map(s =>
+        "<button class=\"filter-pill\" data-status=\"" + s.replace(/"/g,'&quot;') + "\" onclick=\"setFilter(this.dataset.status)\">" + s + " <span class=\"pill-count\">" + counts[s] + "</span></button>"
+      ).join('');
+    filterBar.style.display = 'flex';
+  } else {
+    filterBar.style.display = 'none';
+  }
+  renderFilteredTable();
+  const saved = localStorage.getItem('note_' + cardId) || '';
+  const ta = document.getElementById('modal-notes');
+  ta.value = saved;
+  updateCounter(saved.length);
+  document.getElementById('save-flash').classList.remove('show');
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderFilteredTable() {
+  const tbody = document.getElementById('modal-tbody');
+  const countEl = document.getElementById('modal-count');
+  if (activeFilter === 'all') {
+    const groups = {};
+    currentRows.forEach(r => {
+      const st = r[STATUS_COL] || '—';
+      if (!groups[st]) groups[st] = [];
+      groups[st].push(r);
+    });
+    const sorted = Object.keys(groups).sort();
+    let html = '';
+    sorted.forEach(st => {
+      const c = statusColor(st);
+      html += '<tr><td colspan="7" style="background:' + c.bg + ';color:' + c.fg + ';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;padding:6px 14px;">' + st + ' <span style="font-weight:400;opacity:0.8">(' + groups[st].length + ')</span></td></tr>';
+      groups[st].forEach(row => { html += '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>'; });
+    });
+    tbody.innerHTML = html;
+    if (countEl) countEl.textContent = currentRows.length + ' items';
+  } else {
+    const filtered = currentRows.filter(r => r[STATUS_COL] === activeFilter);
+    tbody.innerHTML = filtered.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
+    if (countEl) countEl.textContent = filtered.length + ' of ' + currentRows.length + ' items';
+  }
+}
+
+function statusColor(st) {
+  if (st.startsWith('Cerrado')) return {bg:'#E6F4EE',fg:'#107E3E'};
+  if (st === 'Pendiente Cliente') return {bg:'#FCEAEA',fg:'#BB0000'};
+  if (st === 'Pendiente SAP') return {bg:'#FEF3E2',fg:'#E76500'};
+  if (st === 'Aprobado') return {bg:'#E8F3FF',fg:'#0070F2'};
+  return {bg:'#F5F6F7',fg:'#6A6D70'};
+}
+
+function setFilter(status) {
+  activeFilter = status;
+  document.querySelectorAll('#modal-filter-pills .filter-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.status === status);
+  });
+  renderFilteredTable();
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  currentCardId = null;
+}
+
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+}
+
+function updateCounter(len) {
+  const remaining = 500 - len;
+  const el = document.getElementById('char-counter');
+  el.textContent = remaining + ' character' + (remaining === 1 ? '' : 's') + ' remaining';
+  el.classList.toggle('warn', remaining < 50);
+}
+
+document.getElementById('modal-notes').addEventListener('input', function() {
+  updateCounter(this.value.length);
+});
+
+function saveNote() {
+  if (!currentCardId) return;
+  localStorage.setItem('note_' + currentCardId, document.getElementById('modal-notes').value);
+  const flash = document.getElementById('save-flash');
+  flash.classList.add('show');
+  setTimeout(() => flash.classList.remove('show'), 2000);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

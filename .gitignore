@@ -1,0 +1,7 @@
+*.xlsx
+~$*
+launchagent.out
+launchagent.err
+rebuild.log
+.claude/
+__pycache__/
