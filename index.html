@@ -116,7 +116,7 @@
     <span class="sap-logo">SAP</span>
     <span class="header-title">Ternium — S/4HANA Implementation Status Report</span>
   </div>
-  <span class="report-date">Report Date: November 10, 2026</span>
+  <span class="report-date">Report Date: November 12, 2026</span>
 </header>
 
 <div class="hero">
@@ -127,7 +127,7 @@
     <span class="badge">FIN · CO · COGM · B&amp;A</span>
     <span class="badge">BR · AMI · ES</span>
     <span class="badge">107 Deltas</span>
-    <span class="badge">262 Parking Lots</span>
+    <span class="badge">267 Parking Lots</span>
   </div>
 </div>
 
@@ -160,21 +160,21 @@
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card" data-card="total-pl" onclick="openModal('total-pl')">
-      <div class="kpi-value">262</div>
+      <div class="kpi-value">267</div>
       <div class="kpi-label">Parking Lots</div>
       <div class="kpi-sub">Total raised</div>
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card green" data-card="pl-closed" onclick="openModal('pl-closed')">
-      <div class="kpi-value">217</div>
+      <div class="kpi-value">221</div>
       <div class="kpi-label">PLs Closed</div>
       <div class="kpi-sub">82.8% closure rate</div>
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card orange" data-card="pl-pending" onclick="openModal('pl-pending')">
-      <div class="kpi-value">42</div>
+      <div class="kpi-value">39</div>
       <div class="kpi-label">PLs Pending</div>
-      <div class="kpi-sub">33 client · 9 SAP</div>
+      <div class="kpi-sub">33 client · 6 SAP</div>
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card gold" data-card="interfaces" onclick="openModal('interfaces')">
@@ -247,7 +247,7 @@
       </div>
       <div class="ws-card-body">
         <div class="ws-stat-row"><span class="ws-stat-label">Enhancements</span><span class="ws-stat-value">Largest workstream</span></div>
-        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">65 total</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">70 total</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">SAC + DSP scope</span></div>
         <div class="ws-mini-bar">
           <div class="ws-mini-seg" style="background:var(--sap-red);flex:8"></div>
@@ -387,9 +387,10 @@
     <div class="chart-card">
       <div class="chart-title">Parking Lots by Status</div>
       <div class="bar-chart">
-        <div class="bar-row"><span class="bar-label">Cerrado</span><div class="bar-track"><div class="bar-fill" style="width:81.7%;background:var(--sap-green);">214</div></div><span class="bar-count">214</span></div>
-        <div class="bar-row"><span class="bar-label">Pendiente Cliente</span><div class="bar-track"><div class="bar-fill" style="width:12.6%;background:var(--sap-red);">33</div></div><span class="bar-count">33</span></div>
-        <div class="bar-row"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:3.4%;background:var(--sap-orange);">9</div></div><span class="bar-count">9</span></div>
+        <div class="bar-row"><span class="bar-label">Cerrado</span><div class="bar-track"><div class="bar-fill" style="width:81.6%;background:var(--sap-green);">218</div></div><span class="bar-count">218</span></div>
+        <div class="bar-row"><span class="bar-label">Pendiente Cliente</span><div class="bar-track"><div class="bar-fill" style="width:12.4%;background:var(--sap-red);">33</div></div><span class="bar-count">33</span></div>
+        <div class="bar-row"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:2.2%;background:var(--sap-orange);">6</div></div><span class="bar-count">6</span></div>
+        <div class="bar-row"><span class="bar-label">Cerrado-Pasa a Mejora Continua</span><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--sap-green);">4</div></div><span class="bar-count">4</span></div>
         <div class="bar-row"><span class="bar-label">Cerrado-Duplicidad</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-green);">3</div></div><span class="bar-count">3</span></div>
         <div class="bar-row"><span class="bar-label">Aprobado</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
         <div class="bar-row"><span class="bar-label">Cambio de alcance</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
@@ -479,7 +480,7 @@
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Items Awaiting Client or SAP Response</span>
-      <span class="tag tag-orange">42 open items</span>
+      <span class="tag tag-orange">39 open items</span>
     </div>
     <table>
       <thead><tr><th>Module</th><th>Pending Client</th><th>Pending SAP</th><th>Total Open</th><th>Priority Type</th></tr></thead>
@@ -490,13 +491,6 @@
           <td>3</td>
           <td><span class="tag tag-red">14</span></td>
           <td>Design Impact</td>
-        </tr>
-        <tr>
-          <td><strong>B&A</strong></td>
-          <td>3</td>
-          <td>4</td>
-          <td><span class="tag tag-orange">7</span></td>
-          <td>Config / Other</td>
         </tr>
         <tr>
           <td><strong>PP</strong></td>
@@ -511,6 +505,13 @@
           <td>0</td>
           <td><span class="tag tag-orange">5</span></td>
           <td>Design Impact</td>
+        </tr>
+        <tr>
+          <td><strong>B&A</strong></td>
+          <td>3</td>
+          <td>1</td>
+          <td><span class="tag tag-orange">4</span></td>
+          <td>Config / Other</td>
         </tr>
         <tr>
           <td><strong>SD</strong></td>
@@ -570,7 +571,7 @@
 </main>
 
 <footer>
-  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · November 10, 2026 · SAP Global Delivery Hub Americas
+  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · November 12, 2026 · SAP Global Delivery Hub Americas
 </footer>
 
 <!-- MODAL -->
@@ -677,11 +678,11 @@ const CARD_DATA = {
     ]
   },
   'total-pl': {
-    title: 'Parking Lots — 262 Total',
+    title: 'Parking Lots — 267 Total',
     tableLabel: 'Distribution across workstreams',
     headers: ['Module', 'Total PLs', 'Closed', 'Pending Client', 'Pending SAP'],
     rows: [
-      ['B&amp;A','65','57','3','4'],
+      ['B&amp;A','70','65','3','1'],
       ['CO','51','48','3','0'],
       ['PP','34','28','6','0'],
       ['MM-IM','28','14','11','3'],
@@ -698,11 +699,11 @@ const CARD_DATA = {
     ]
   },
   'pl-closed': {
-    title: 'Parking Lots Closed — 217 (82.8%)',
+    title: 'Parking Lots Closed — 221 (82.8%)',
     tableLabel: 'Closed parking lots by module',
     headers: ['Module', 'Closed', '% of Module', 'Total PLs'],
     rows: [
-      ['B&amp;A','57','87.7%','65'],
+      ['B&amp;A','65','92.9%','70'],
       ['CO','48','94.1%','51'],
       ['PP','28','82.4%','34'],
       ['MM-IM','14','50.0%','28'],
@@ -719,14 +720,14 @@ const CARD_DATA = {
     ]
   },
   'pl-pending': {
-    title: 'Parking Lots Pending — 42 Open',
+    title: 'Parking Lots Pending — 39 Open',
     tableLabel: 'Items awaiting response — escalation required',
     headers: ['Module', 'Pending Client', 'Pending SAP', 'Total', 'Risk'],
     rows: [
       ['MM-IM','11','3','14','High'],
-      ['B&amp;A','3','4','7','Medium'],
       ['PP','6','0','6','Medium'],
       ['AR-PP','5','0','5','Medium'],
+      ['B&amp;A','3','1','4','Medium'],
       ['SD','4','0','4','Medium'],
       ['MM-PUR','1','2','3','Medium'],
       ['CO','3','0','3','Medium']
@@ -891,7 +892,7 @@ const CARD_DATA = {
   },
   'ws-ba': {
     title: 'B&amp;A — Budget &amp; Analytics · Parking Lots',
-    tableLabel: 'All 65 Parking Lots for this workstream',
+    tableLabel: 'All 70 Parking Lots for this workstream',
     headers: ['PL ID', 'Module', 'Workstream', 'Description', 'Priority', 'Type', 'Status'],
     rows: [
       ['PL-CO-042','B&amp;A','040 - Contabilidad de Gastos Generales y Cálc','Cálculo de precio de segunda como un porcentaje en base a primera','4 - Otros','3-Otros','Cerrado'],
@@ -950,15 +951,20 @@ const CARD_DATA = {
       ['PL-B&amp;A-232','B&amp;A','REX Directores Tx- 02/10/26','Look&amp;feel historias en SAC','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-233','B&amp;A','REX Directores Tx- 02/10/26','Revisión posibilidades de No Scroll a la derecha','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-234','B&amp;A','REX Directores Tx- 02/10/26','Oportunidades de AI: En curso Georgina/Veronica','4 - Otros','3-Otros','Cerrado'],
-      ['PL-B&amp;A-245','B&amp;A','Taller validacion Costos SF y GG (26/10)','Filtro de jerarquia de centros de costo','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-245','B&amp;A','Taller validacion Costos SF y GG (26/10)','Filtro de jerarquia de centros de costo','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-246','B&amp;A','Taller validacion Costos SF y GG (26/10)','Desbloquear Fecha de presupuesto','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
-      ['PL-B&amp;A-247','B&amp;A','Taller validacion Costos SF y GG (26/10)','Subrubro resto SF en KPI&#39;s','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
-      ['PL-B&amp;A-248','B&amp;A','Taller validacion Costos SF y GG (26/10)','Conversión de monedas automatica','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-247','B&amp;A','Taller validacion Costos SF y GG (26/10)','Subrubro resto SF en KPI&#39;s','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-248','B&amp;A','Taller validacion Costos SF y GG (26/10)','Conversión de monedas automatica','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-260','B&amp;A','Taller validacion Costos SF y GG (28/10)','Incluir botón de Eliminar en ajustes de variaciones','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
       ['PL-B&amp;A-261','B&amp;A','Taller validacion Costos SF y GG (29/10)','Iconos a usar en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-B&amp;A-262','B&amp;A','Show &amp; Tell Mano de Obra (30/10)','Simplificación de pasos en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-B&amp;A-263','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Data analyzer con todo el nivel de detalle del Real','2 - Impacta la Configuración','3-Otros','Cerrado'],
-      ['PL-B&amp;A-264','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Reporte BI que permita la visualización hasta nivel de proyecto','2 - Impacta la Configuración','3-Otros','Cerrado']
+      ['PL-B&amp;A-264','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Reporte BI que permita la visualización hasta nivel de proyecto','2 - Impacta la Configuración','3-Otros','Cerrado'],
+      ['PL-B&amp;A-266','B&amp;A','Correo Ternium (6/11)','Jerarquia de tiempo en modelo de Precio sea promedio','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
+      ['PL-B&amp;A-267','B&amp;A','Correo Ternium (6/11)','En modelo de precios incluir nueva columna del Valuation Type, para poder v','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
+      ['PL-B&amp;A-268','B&amp;A','Correo Ternium (6/11)','Cargar precios en monedas diferentes a USD.','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
+      ['PL-B&amp;A-269','B&amp;A','Correo Ternium (6/11)','Cargar en UM diferentes a la Unidad de medida base y que el programa convie','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
+      ['PL-B&amp;A-270','B&amp;A','Correo Ternium (6/11)','Aplique a los precios la logica de polinomica, descalce','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua']
     ]
   },
   'ws-mmim': {
@@ -1128,7 +1134,7 @@ const CARD_DATA = {
       ['Brasil','SD y PP implementado + modelo anterior costo real.','No aplica a Brasil   No aplica a Brasil... Brasil ya tenie la abertura de los materiales que GLOBAL necesita','N/A no necesita, sus materiales ya cuemplen con el criterio del template global','Adicionar a las características ruta y proveedor en sus materiales ya existentes y revisar configuraciones en caso haya que homologar (comparar Brasil y México). Cerrar parking lots y enviar BPD para firma.'],
       ['Centro América','SD y PP implementado.','No es posible implementar el template global definido en Explore por escenario material cluster. El código definido para producir incluye la ruta, sin embargo, la ruta de producción que se seguirá no se conoce al momento de cargar la orden de ventas (brecha 3 producto vendido ≠ producto costeado).','Centro América no tiene trazabilidad del material producido y vendido, por lo tanto, no puede implementar la solución de Usiminas.  Hacer Usiminas material cluster más sencillo sin ruta completa solo línea productiva, no entra ruta ni proveedor en sus caracteristica','PL: revisar si hace falta abrir los materiales cluster por línea productiva o si la información actual del centro del que sale la venta es suficiente. (Jorge y Luis)  Si Se va implementar Product Costing sin la granularidad que el template exige a nivel de material   - Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
       ['Colombia','SD y PP implementado.','No es posible implementar el template global definido en Explore por escenario material cluster. El código definido para producir incluye la ruta, sin embargo, la ruta de producción que se seguirá no se conoce al momento de cargar la orden de ventas (brecha 3 producto vendido ≠ producto costeado).','Finalizar prueba en WS. Se agenda una siguiente reunión','Enfocarnos en la siguiente sesión wn la  prioridad de material cluster.  Si Se va implementar Product Costing  Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
-      ['USA Shreveport','SD y PP no implementado. Trabajan con interfaces (NCA lite). Escenario similar a MX y AR.','Si aplica template Global','N/A - Va por Solucion Mexico y Argentina  Sería lo mismo que colombia pero añade un paso más .','Compra de colombia y sigue produciendo, desde colombia se tiene el lote.  Si Se va implementar Product Costing  - Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
+      ['USA Shreveport','SD y PP no implementado. Trabajan con interfaces (NCA lite). Escenario similar a MX y AR.','Si aplica template Global','N/A - Va por Solucion Mexico y Argentina  Sería lo mismo que colombia pero añade un paso más .  USA. recibiría el material logístico sin ruta y tendría que volver a abrirlo para seguir produciendo, por eso yo decía que depende de la solución que quede definida para Colombia / otros países porque esa apertura depende de la definición de los otros países   pero el proceso productivo dentro de USA Shreveport es con interfaz','Compra de colombia y sigue produciendo, desde colombia se tiene el lote.  Si Se va implementar Product Costing  - Hace falta WS Interfaces y Migración   - Cerrar parking lots y enviar BPD para firma.'],
       ['USA Huston','','','','Entra en el mismo modelos de colombia. Desde colombia hya una venta de material a Houston, orden de venta y orden de compra, hay que saber si hay costo de transferencia por la compra y venta y como son tratados estos costos. - Hace falta WS Interfaces y Migración  - Cerrar parking lots y enviar BPD para firma.'],
       ['Centro América / USA','Producto Vendido ≠ Producto Costeado&quot; y Estrategia de Venta','Excepción Centro América: Dado que Centro América no posee trazabilidad del material producido y vendido, no puede aplicar la solución Usiminas; se acordó validar no implementar costos de producción para esa región','',''],
       ['Centro América / USA','Codificación del Acero y Apertura por Proveedor de Origen','No se tiene  apertura la codificación por Proveedor de Origen (México, Brasil, Argentina, Terceros) e integrando las 10 características técnicas clave (Ruta, Producto, Forma, Capa, Esquema, Proveedor, Grado, Quality Level, GpoEspesor, GpoAncho','',''],
