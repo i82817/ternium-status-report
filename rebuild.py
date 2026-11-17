@@ -185,18 +185,95 @@ for r in rows_d:
         iface_lines.append(f"      ['{s(r[0])}','{s(r[1])}','{s(r[3],60)}','{s(r[12])}','{s(r[7])}']")
 iface_modal_js = ',\n'.join(iface_lines)
 
-# bar chart — deltas by module
+# ── bar-drill CARD_DATA: deltas by status ─────────────────────────────────────
+def js_delta_rows_for(filter_fn):
+    lines = []
+    for r in rows_d:
+        if filter_fn(r):
+            lines.append(f"      ['{s(r[0])}','{s(r[1])}','{s(r[3],60)}','{s(r[7])}','{s(r[9])}','{s(r[12])}']")
+    return ',\n'.join(lines)
+
+BAR_STATUS_KEYS = {
+    'Creado':    ('creado',   'Open (Creado)'),
+    'Cerrado':   ('cerrado',  'Closed (Cerrado)'),
+    'Aprobado':  ('aprobado', 'Approved (Aprobado)'),
+    'Rechazado': ('rechazado','Rejected (Rechazado)'),
+}
+for raw_st, (slug, label) in BAR_STATUS_KEYS.items():
+    pass  # built inline in CARD_DATA template
+
+def cancelado_rows_js():
+    lines = []
+    for r in rows_d:
+        if 'Cancelado' in str(r[9] or ''):
+            lines.append(f"      ['{s(r[0])}','{s(r[1])}','{s(r[3],60)}','{s(r[7])}','{s(r[9])}','{s(r[12])}']")
+    return ',\n'.join(lines)
+
+def status_rows_js(status_value):
+    return js_delta_rows_for(lambda r: str(r[9] or '').strip() == status_value)
+
+# bar-drill: deltas by type
+TYPE_GROUPS = [
+    ('enh',    'Enhancement',        lambda r: 'nhace' in str(r[12] or '')),
+    ('iface',  'Interface',          lambda r: 'Interfaz' in str(r[12] or '')),
+    ('newcfg', 'New Configuration',  lambda r: 'Nueva' in str(r[12] or '')),
+    ('rep',    'Report',             lambda r: 'Reporte' in str(r[12] or '')),
+    ('mig',    'Migration / Other',  lambda r: 'Migra' in str(r[12] or '') or 'Conver' in str(r[12] or '')),
+]
+
+def type_rows_js(filter_fn):
+    lines = []
+    for r in rows_d:
+        if filter_fn(r):
+            lines.append(f"      ['{s(r[0])}','{s(r[1])}','{s(r[3],60)}','{s(r[9])}','{s(r[12])}']")
+    return ',\n'.join(lines)
+
+# bar-drill: deltas by module
+def mod_rows_js(module):
+    lines = []
+    for r in rows_d:
+        if str(r[1] or '').strip() == module:
+            lines.append(f"      ['{s(r[0])}','{s(r[1])}','{s(r[3],60)}','{s(r[7])}','{s(r[9])}','{s(r[12])}']")
+    return ',\n'.join(lines)
+
+# bar-drill: PLs by status
+def pl_stat_rows_js(status_value):
+    lines = []
+    for r in rows_p:
+        st = str(r[10] or '').strip()
+        match = ('Cerrado' in st) if status_value == '__cerrado__' else (st == status_value)
+        if match:
+            lines.append(
+                "      ['" + s(r[0]) + "','" + s(r[1]) + "','" + s(r[2], 45) +
+                "','" + s(r[5], 75) + "','" + s(r[7]) + "','" + s(r[8]) + "','" + s(r[10]) + "']"
+            )
+    return ',\n'.join(lines)
+
+# bar chart — deltas by module (clickable)
 mod_bars_html = ''
 for m, c in sorted(mod_d.items(), key=lambda x: -x[1]):
-    w = bpct(c, total_d)
-    mod_bars_html += f'        <div class="bar-row"><span class="bar-label">{s(m)}</span><div class="bar-track"><div class="bar-fill" style="width:{w}%;background:var(--sap-blue);">{c}</div></div><span class="bar-count">{c}</span></div>\n'
+    w   = bpct(c, total_d)
+    key = s(m).replace(' ', '_').replace('&amp;', 'AND').replace('&', 'AND')
+    mod_bars_html += (
+        f'        <div class="bar-row bar-clickable" onclick="openModal(\'bar-mod-{key}\')" title="Click to drill into {s(m)}">'
+        f'<span class="bar-label">{s(m)}</span>'
+        f'<div class="bar-track"><div class="bar-fill" style="width:{w}%;background:var(--sap-blue);">{c}</div></div>'
+        f'<span class="bar-count">{c}</span></div>\n'
+    )
 
-# bar chart — PLs by status
+# bar chart — PLs by status (clickable)
 pl_bars_html = ''
+PL_STAT_COLORS = {}
 for st, c in sorted(stat_p.items(), key=lambda x: -x[1]):
     w   = bpct(c, total_p)
     col = 'var(--sap-green)' if 'Cerrado' in st else ('var(--sap-red)' if st == 'Pendiente Cliente' else ('var(--sap-orange)' if st == 'Pendiente SAP' else 'var(--sap-grey)'))
-    pl_bars_html += f'        <div class="bar-row"><span class="bar-label">{s(st)}</span><div class="bar-track"><div class="bar-fill" style="width:{w}%;background:{col};">{c}</div></div><span class="bar-count">{c}</span></div>\n'
+    key = s(st).replace(' ', '_').replace('-', '_')
+    pl_bars_html += (
+        f'        <div class="bar-row bar-clickable" onclick="openModal(\'bar-plstat-{key}\')" title="Click to view {s(st)} items">'
+        f'<span class="bar-label">{s(st)}</span>'
+        f'<div class="bar-track"><div class="bar-fill" style="width:{w}%;background:{col};">{c}</div></div>'
+        f'<span class="bar-count">{c}</span></div>\n'
+    )
 
 # open priority table
 open_p12 = [r for r in open_rows_d if str(r[7] or '').startswith(('1', '2'))][:8]
@@ -322,6 +399,9 @@ html = f'''<!DOCTYPE html>
   .bar-track {{ flex:1; height:20px; background:var(--sap-bg); border-radius:3px; overflow:hidden; }}
   .bar-fill {{ height:100%; border-radius:3px; display:flex; align-items:center; padding-left:6px; color:white; font-size:11px; font-weight:600; transition:width 0.6s ease; }}
   .bar-count {{ font-size:12px; font-weight:700; width:30px; text-align:right; flex-shrink:0; }}
+  .bar-clickable {{ cursor:pointer; border-radius:4px; padding:2px 4px; margin:-2px -4px; transition:background 0.12s; }}
+  .bar-clickable:hover {{ background:var(--sap-light); }}
+  .bar-clickable:hover .bar-label {{ color:var(--sap-blue); }}
   .table-card {{ background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }}
   .table-header {{ padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--sap-border); }}
   .table-title {{ font-size:14px; font-weight:700; }}
@@ -581,32 +661,32 @@ html = f'''<!DOCTYPE html>
   <div class="section-title"><span class="section-icon">▣</span> Delta / GAP Analysis</div>
   <div class="charts-row">
     <div class="chart-card">
-      <div class="chart-title">Deltas by Status</div>
+      <div class="chart-title">Deltas by Status <span style="font-size:10px;color:var(--sap-blue);font-weight:400;margin-left:6px;">▸ click a bar to drill in</span></div>
       <div class="bar-chart">
-        <div class="bar-row"><span class="bar-label">Creado (Open)</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(open_d,total_d)}%;background:var(--sap-red);">{open_d}</div></div><span class="bar-count">{open_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Cerrado (Closed)</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(closed_d,total_d)}%;background:var(--sap-green);">{closed_d}</div></div><span class="bar-count">{closed_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Aprobado</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(aprov_d,total_d)}%;background:var(--sap-blue);">{aprov_d}</div></div><span class="bar-count">{aprov_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Cancelado</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(cancel_d,total_d)}%;background:var(--sap-grey);">{cancel_d}</div></div><span class="bar-count">{cancel_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Rechazado</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(reject_d,total_d)}%;background:var(--sap-orange);">{reject_d}</div></div><span class="bar-count">{reject_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-status-Creado')" title="Click to view open deltas"><span class="bar-label">Creado (Open)</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(open_d,total_d)}%;background:var(--sap-red);">{open_d}</div></div><span class="bar-count">{open_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-status-Cerrado')" title="Click to view closed deltas"><span class="bar-label">Cerrado (Closed)</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(closed_d,total_d)}%;background:var(--sap-green);">{closed_d}</div></div><span class="bar-count">{closed_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-status-Aprobado')" title="Click to view approved deltas"><span class="bar-label">Aprobado</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(aprov_d,total_d)}%;background:var(--sap-blue);">{aprov_d}</div></div><span class="bar-count">{aprov_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-status-Cancelado')" title="Click to view cancelled deltas"><span class="bar-label">Cancelado</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(cancel_d,total_d)}%;background:var(--sap-grey);">{cancel_d}</div></div><span class="bar-count">{cancel_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-status-Rechazado')" title="Click to view rejected deltas"><span class="bar-label">Rechazado</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(reject_d,total_d)}%;background:var(--sap-orange);">{reject_d}</div></div><span class="bar-count">{reject_d}</span></div>
       </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Deltas by Type</div>
+      <div class="chart-title">Deltas by Type <span style="font-size:10px;color:var(--sap-blue);font-weight:400;margin-left:6px;">▸ click a bar to drill in</span></div>
       <div class="bar-chart">
-        <div class="bar-row"><span class="bar-label">Enhancement</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(enh_d,total_d)}%;background:var(--sap-blue);">{enh_d}</div></div><span class="bar-count">{enh_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Interface</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(iface_d,total_d)}%;background:var(--sap-orange);">{iface_d}</div></div><span class="bar-count">{iface_d}</span></div>
-        <div class="bar-row"><span class="bar-label">New Configuration</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(newcfg_d,total_d)}%;background:var(--sap-gold);">{newcfg_d}</div></div><span class="bar-count">{newcfg_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Report</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(rep_d,total_d)}%;background:var(--sap-mid);">{rep_d}</div></div><span class="bar-count">{rep_d}</span></div>
-        <div class="bar-row"><span class="bar-label">Migration / Other</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(mig_d,total_d)}%;background:var(--sap-grey);">{mig_d}</div></div><span class="bar-count">{mig_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-enh')" title="Click to view Enhancement deltas"><span class="bar-label">Enhancement</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(enh_d,total_d)}%;background:var(--sap-blue);">{enh_d}</div></div><span class="bar-count">{enh_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-iface')" title="Click to view Interface deltas"><span class="bar-label">Interface</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(iface_d,total_d)}%;background:var(--sap-orange);">{iface_d}</div></div><span class="bar-count">{iface_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-newcfg')" title="Click to view New Configuration deltas"><span class="bar-label">New Configuration</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(newcfg_d,total_d)}%;background:var(--sap-gold);">{newcfg_d}</div></div><span class="bar-count">{newcfg_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-rep')" title="Click to view Report deltas"><span class="bar-label">Report</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(rep_d,total_d)}%;background:var(--sap-mid);">{rep_d}</div></div><span class="bar-count">{rep_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-mig')" title="Click to view Migration / Other deltas"><span class="bar-label">Migration / Other</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(mig_d,total_d)}%;background:var(--sap-grey);">{mig_d}</div></div><span class="bar-count">{mig_d}</span></div>
       </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Deltas by Module</div>
+      <div class="chart-title">Deltas by Module <span style="font-size:10px;color:var(--sap-blue);font-weight:400;margin-left:6px;">▸ click a bar to drill in</span></div>
       <div class="bar-chart">
 {mod_bars_html}      </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Parking Lots by Status</div>
+      <div class="chart-title">Parking Lots by Status <span style="font-size:10px;color:var(--sap-blue);font-weight:400;margin-left:6px;">▸ click a bar to drill in</span></div>
       <div class="bar-chart">
 {pl_bars_html}      </div>
     </div>
@@ -825,11 +905,110 @@ const CARD_DATA = {{
     rows: [
 {js_mc_rows()}
     ]
-  }}
+  }},
+
+  // ── bar-drill: Deltas by Status ───────────────────────────────────────────
+  'bar-status-Creado': {{
+    title: 'Open Deltas — Creado ({open_d} items)',
+    tableLabel: 'All deltas with status Creado (awaiting resolution)',
+    headers: ['Delta ID', 'Module', 'Description', 'Priority', 'Status', 'Type'],
+    rows: [
+{status_rows_js('Creado')}
+    ]
+  }},
+  'bar-status-Cerrado': {{
+    title: 'Closed Deltas — Cerrado ({closed_d} items)',
+    tableLabel: 'All deltas with status Cerrado (resolved)',
+    headers: ['Delta ID', 'Module', 'Description', 'Priority', 'Status', 'Type'],
+    rows: [
+{status_rows_js('Cerrado')}
+    ]
+  }},
+  'bar-status-Aprobado': {{
+    title: 'Approved Deltas — Aprobado ({aprov_d} items)',
+    tableLabel: 'All deltas with status Aprobado',
+    headers: ['Delta ID', 'Module', 'Description', 'Priority', 'Status', 'Type'],
+    rows: [
+{status_rows_js('Aprobado')}
+    ]
+  }},
+  'bar-status-Cancelado': {{
+    title: 'Cancelled Deltas — Cancelado ({cancel_d} items)',
+    tableLabel: 'All deltas with status Cancelado',
+    headers: ['Delta ID', 'Module', 'Description', 'Priority', 'Status', 'Type'],
+    rows: [
+{cancelado_rows_js()}
+    ]
+  }},
+  'bar-status-Rechazado': {{
+    title: 'Rejected Deltas — Rechazado ({reject_d} items)',
+    tableLabel: 'All deltas with status Rechazado',
+    headers: ['Delta ID', 'Module', 'Description', 'Priority', 'Status', 'Type'],
+    rows: [
+{status_rows_js('Rechazado')}
+    ]
+  }},
+
+  // ── bar-drill: Deltas by Type ─────────────────────────────────────────────
+  'bar-type-enh': {{
+    title: 'Enhancement Deltas ({enh_d} items)',
+    tableLabel: 'All Enhancement-type deltas',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+{type_rows_js(lambda r: 'nhace' in str(r[12] or ''))}
+    ]
+  }},
+  'bar-type-iface': {{
+    title: 'Interface Deltas ({iface_d} items)',
+    tableLabel: 'All Interface-type deltas',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+{type_rows_js(lambda r: 'Interfaz' in str(r[12] or ''))}
+    ]
+  }},
+  'bar-type-newcfg': {{
+    title: 'New Configuration Deltas ({newcfg_d} items)',
+    tableLabel: 'All Nueva Configuración-type deltas',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+{type_rows_js(lambda r: 'Nueva' in str(r[12] or ''))}
+    ]
+  }},
+  'bar-type-rep': {{
+    title: 'Report Deltas ({rep_d} items)',
+    tableLabel: 'All Reporte-type deltas',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+{type_rows_js(lambda r: 'Reporte' in str(r[12] or ''))}
+    ]
+  }},
+  'bar-type-mig': {{
+    title: 'Migration / Other Deltas ({mig_d} items)',
+    tableLabel: 'All Conversion/Migración-type deltas',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+{type_rows_js(lambda r: 'Migra' in str(r[12] or '') or 'Conver' in str(r[12] or ''))}
+    ]
+  }},
+
+  // ── bar-drill: Deltas by Module (dynamic, one entry per module) ────────────
+  {', '.join(f"'bar-mod-{s(m).replace(' ','_').replace('&amp;','AND').replace('&','AND')}': {{ title: '{s(m)} Module — {c} Deltas', tableLabel: 'All {c} deltas for module {s(m)}', headers: ['Delta ID','Module','Description','Priority','Status','Type'], rows: [{chr(10)}{mod_rows_js(m)}{chr(10)}    ] }}" for m,c in sorted(mod_d.items(), key=lambda x:-x[1]))},
+
+  // ── bar-drill: Parking Lots by Status ─────────────────────────────────────
+  {', '.join(f"'bar-plstat-{s(st).replace(' ','_').replace('-','_')}': {{ title: 'Parking Lots — {s(st)} ({c} items)', tableLabel: 'All PL items with status {s(st)}', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [{chr(10)}{pl_stat_rows_js('__cerrado__' if 'Cerrado' in st else st)}{chr(10)}    ] }}" for st,c in sorted(stat_p.items(), key=lambda x:-x[1]))}
 }};
 
 const WS_CARDS = new Set(['ws-pp','ws-ba','ws-mmim','ws-co','ws-mmpur','ws-sd']);
 const STATUS_COL = 6;
+
+function barDrillStatusCol(cardId) {{
+  // returns the column index that holds Status for filter-pills, or -1 if no pills
+  if (WS_CARDS.has(cardId)) return 6;          // PL rows: col 6 = Status
+  if (cardId.startsWith('bar-mod-')) return 4;  // delta rows: col 4 = Status
+  if (cardId.startsWith('bar-type-')) return 3; // delta rows: col 3 = Status
+  if (cardId.startsWith('bar-plstat-')) return 6; // PL rows: col 6 = Status
+  return -1;
+}}
 let currentCardId = null;
 let currentRows = [];
 let activeFilter = 'all';
@@ -845,10 +1024,11 @@ function openModal(cardId) {{
   const thead = document.getElementById('modal-thead');
   thead.innerHTML = '<tr>' + data.headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
   const filterBar = document.getElementById('modal-filter-bar');
-  if (WS_CARDS.has(cardId)) {{
-    const statuses = [...new Set(data.rows.map(r => r[STATUS_COL]).filter(Boolean))].sort();
+  const stCol = barDrillStatusCol(cardId);
+  if (stCol >= 0 && data.rows.length > 0) {{
+    const statuses = [...new Set(data.rows.map(r => r[stCol]).filter(Boolean))].sort();
     const counts = {{}};
-    statuses.forEach(s => {{ counts[s] = data.rows.filter(r => r[STATUS_COL] === s).length; }});
+    statuses.forEach(s => {{ counts[s] = data.rows.filter(r => r[stCol] === s).length; }});
     const pillsEl = document.getElementById('modal-filter-pills');
     pillsEl.innerHTML =
       "<button class=\\"filter-pill active\\" data-status=\\"all\\" onclick=\\"setFilter('all')\\">All <span class=\\"pill-count\\">" + data.rows.length + "</span></button>" +
@@ -872,24 +1052,30 @@ function openModal(cardId) {{
 function renderFilteredTable() {{
   const tbody = document.getElementById('modal-tbody');
   const countEl = document.getElementById('modal-count');
+  const stCol = barDrillStatusCol(currentCardId);
   if (activeFilter === 'all') {{
-    const groups = {{}};
-    currentRows.forEach(r => {{
-      const st = r[STATUS_COL] || '—';
-      if (!groups[st]) groups[st] = [];
-      groups[st].push(r);
-    }});
-    const sorted = Object.keys(groups).sort();
-    let html = '';
-    sorted.forEach(st => {{
-      const c = statusColor(st);
-      html += '<tr><td colspan="7" style="background:' + c.bg + ';color:' + c.fg + ';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;padding:6px 14px;">' + st + ' <span style="font-weight:400;opacity:0.8">(' + groups[st].length + ')</span></td></tr>';
-      groups[st].forEach(row => {{ html += '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>'; }});
-    }});
-    tbody.innerHTML = html;
+    if (stCol >= 0) {{
+      const groups = {{}};
+      currentRows.forEach(r => {{
+        const st = r[stCol] || '—';
+        if (!groups[st]) groups[st] = [];
+        groups[st].push(r);
+      }});
+      const sorted = Object.keys(groups).sort();
+      let html = '';
+      sorted.forEach(st => {{
+        const c = statusColor(st);
+        const colspan = currentRows[0] ? currentRows[0].length : 7;
+        html += '<tr><td colspan="' + colspan + '" style="background:' + c.bg + ';color:' + c.fg + ';font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;padding:6px 14px;">' + st + ' <span style="font-weight:400;opacity:0.8">(' + groups[st].length + ')</span></td></tr>';
+        groups[st].forEach(row => {{ html += '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>'; }});
+      }});
+      tbody.innerHTML = html;
+    }} else {{
+      tbody.innerHTML = currentRows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
+    }}
     if (countEl) countEl.textContent = currentRows.length + ' items';
   }} else {{
-    const filtered = currentRows.filter(r => r[STATUS_COL] === activeFilter);
+    const filtered = stCol >= 0 ? currentRows.filter(r => r[stCol] === activeFilter) : currentRows;
     tbody.innerHTML = filtered.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('');
     if (countEl) countEl.textContent = filtered.length + ' of ' + currentRows.length + ' items';
   }}
