@@ -276,12 +276,14 @@ for st, c in sorted(stat_p.items(), key=lambda x: -x[1]):
     )
 
 # open priority table
+# open priority table (clickable rows)
 open_p12 = [r for r in open_rows_d if str(r[7] or '').startswith(('1', '2'))][:8]
 open_rows_html = ''
 for r in open_p12:
     ptag = 'tag-red' if str(r[7] or '').startswith('1') else 'tag-gold'
-    open_rows_html += f'''        <tr>
-          <td><strong>{s(r[0])}</strong></td>
+    did  = s(r[0])
+    open_rows_html += f'''        <tr class="row-clickable" onclick="openModal('delta-{did}')" title="Click to view full details for {did}">
+          <td><strong style="color:var(--sap-blue)">{did}</strong></td>
           <td>{s(r[1])}</td>
           <td>{s(r[3], 60)}</td>
           <td><span class="tag {ptag}">{s(r[7])}</span></td>
@@ -289,19 +291,98 @@ for r in open_p12:
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>\n'''
 
-# pending PLs table
+# pending PLs table (clickable rows)
 pending_rows_html = ''
 for m, v in sorted(pending_by_mod.items(), key=lambda x: -(x[1]['client']+x[1]['sap'])):
     tot = v['client'] + v['sap']
     tag = 'tag-red' if tot >= 10 else ('tag-orange' if tot >= 3 else 'tag-green')
-    imp = 'Design Impact' if v['client'] >= 5 else 'Config / Other'
-    pending_rows_html += f'''        <tr>
-          <td><strong>{m}</strong></td>
+    imp  = 'Design Impact' if v['client'] >= 5 else 'Config / Other'
+    mkey = s(m).replace(' ', '_').replace('&amp;', 'AND').replace('&', 'AND').replace('-', '_')
+    pending_rows_html += f'''        <tr class="row-clickable" onclick="openModal('pl-pending-mod-{mkey}')" title="Click to view pending PLs for {m}">
+          <td><strong style="color:var(--sap-blue)">{m}</strong></td>
           <td>{v["client"]}</td>
           <td>{v["sap"]}</td>
           <td><span class="tag {tag}">{tot}</span></td>
           <td>{imp}</td>
         </tr>\n'''
+
+# ── delta detail cards (one per open-priority row) ────────────────────────────
+def delta_detail_card_js(delta_id):
+    """Return JS object literal for a single delta's full detail view."""
+    row = next((r for r in rows_d if str(r[0] or '').strip() == delta_id), None)
+    if not row:
+        return f"{{ title: '{delta_id} — Detail', tableLabel: 'Delta not found', headers: ['Field','Value'], rows: [] }}"
+    ptag_js = 'tag-red' if str(row[7] or '').startswith('1') else ('tag-gold' if str(row[7] or '').startswith('2') else 'tag-grey')
+    stat_js = str(row[9] or '')
+    stat_color = '#BB0000' if stat_js == 'Creado' else ('#107E3E' if stat_js == 'Cerrado' else '#E8A000')
+    # Build detail rows as key-value pairs
+    fields = [
+        ('Delta ID',           s(row[0])),
+        ('SAP Module',         s(row[1])),
+        ('Priority',           s(row[7])),
+        ('Status',             s(row[9])),
+        ('Type',               s(row[12])),
+        ('Macro Process',      s(row[3])),
+        ('Process',            s(row[4])),
+        ('Short Description',  s(row[5])),
+        ('Detailed Description', s(row[6])),
+        ('SAP Alternative',    s(row[15])),
+        ('Complexity',         s(row[14])),
+        ('Permanent / Temp',   s(row[21])),
+        ('Client Owner',       s(row[16])),
+        ('SAP Owner',          s(row[17])),
+        ('Business Owner',     s(row[18])),
+        ('Created Date',       s(row[19])),
+        ('Close Date',         s(row[20])),
+        ('In SOW (Interfaz)',   s(row[13])),
+    ]
+    rows_js = ',\n'.join(f"      ['{f}','{v}']" for f, v in fields if v)
+    return (
+        f"{{ title: 'Delta {s(row[0])} — {s(row[1])} · {s(row[7])}',"
+        f" tableLabel: '{s(row[5][:80]) if row[5] else s(row[3])}', "
+        f"headers: ['Field','Value'], rows: [\n{rows_js}\n    ] }}"
+    )
+
+# ── pending-PL-by-module cards ─────────────────────────────────────────────────
+def js_pl_pending_for_mod_key(mkey):
+    """Return the set of module strings that map to this mkey."""
+    # reverse-map: find the module(s) whose sanitised key matches mkey
+    found = []
+    for m in pending_by_mod.keys():
+        k = s(m).replace(' ', '_').replace('&amp;', 'AND').replace('&', 'AND').replace('-', '_')
+        if k == mkey:
+            found.append(m)
+    return found
+
+def js_pl_pending_rows_for_mod(mods):
+    """Full PL rows for a list of module strings, filtered to Pendiente statuses."""
+    lines = []
+    for r in rows_p:
+        m  = str(r[1] or '').strip()
+        st = str(r[10] or '').strip()
+        if m in mods and 'Pendiente' in st:
+            lines.append(
+                "      ['" + s(r[0]) + "','" + s(r[1]) + "','" + s(r[2], 45) +
+                "','" + s(r[5], 75) + "','" + s(r[6], 80) + "','" + s(r[7]) +
+                "','" + s(r[8]) + "','" + s(r[11]) + "','" + s(r[12]) + "','" + s(r[10]) + "']"
+            )
+    return ',\n'.join(lines)
+
+# pre-build the pending-mod CARD_DATA fragment (avoids chr(39) hacks in f-string)
+_pmc_parts = []
+for _m, _v in sorted(pending_by_mod.items(), key=lambda x: -(x[1]['client']+x[1]['sap'])):
+    _tot = _v['client'] + _v['sap']
+    _mkey = s(_m).replace(' ', '_').replace('&amp;', 'AND').replace('&', 'AND').replace('-', '_')
+    _mods = js_pl_pending_for_mod_key(_mkey)
+    _rows = js_pl_pending_rows_for_mod(_mods)
+    _pmc_parts.append(
+        f"  'pl-pending-mod-{_mkey}': {{"
+        f" title: 'Pending PLs — {s(_m)} ({_tot} open)',"
+        f" tableLabel: 'Parking Lots pending resolution for module {s(_m)}',"
+        f" headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'],"
+        f" rows: [\n{_rows}\n    ] }}"
+    )
+_pending_mod_cards_js = ',\n'.join(_pmc_parts)
 
 # ── HTML template ─────────────────────────────────────────────────────────────
 html = f'''<!DOCTYPE html>
@@ -402,6 +483,10 @@ html = f'''<!DOCTYPE html>
   .bar-clickable {{ cursor:pointer; border-radius:4px; padding:2px 4px; margin:-2px -4px; transition:background 0.12s; }}
   .bar-clickable:hover {{ background:var(--sap-light); }}
   .bar-clickable:hover .bar-label {{ color:var(--sap-blue); }}
+  .row-clickable {{ cursor:pointer; transition:background 0.12s; }}
+  .row-clickable:hover {{ background:var(--sap-light) !important; }}
+  .row-clickable td:first-child::after {{ content:' ▸'; font-size:10px; color:var(--sap-blue); opacity:0; transition:opacity 0.12s; }}
+  .row-clickable:hover td:first-child::after {{ opacity:1; }}
   .table-card {{ background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }}
   .table-header {{ padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--sap-border); }}
   .table-title {{ font-size:14px; font-weight:700; }}
@@ -696,7 +781,10 @@ html = f'''<!DOCTYPE html>
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Priority 1 &amp; 2 Open Deltas</span>
-      <span class="tag tag-red">{len(open_p12)} items shown — resolve before Realize phase</span>
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:10px;color:var(--sap-blue);">▸ click a row to view full detail</span>
+        <span class="tag tag-red">{len(open_p12)} items shown — resolve before Realize phase</span>
+      </span>
     </div>
     <table>
       <thead><tr><th>Delta ID</th><th>Module</th><th>Description</th><th>Priority</th><th>Type</th><th>Status</th></tr></thead>
@@ -709,7 +797,10 @@ html = f'''<!DOCTYPE html>
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Items Awaiting Client or SAP Response</span>
-      <span class="tag tag-orange">{pl_pending} open items</span>
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:10px;color:var(--sap-blue);">▸ click a row to view pending PL list</span>
+        <span class="tag tag-orange">{pl_pending} open items</span>
+      </span>
     </div>
     <table>
       <thead><tr><th>Module</th><th>Pending Client</th><th>Pending SAP</th><th>Total Open</th><th>Priority Type</th></tr></thead>
@@ -995,7 +1086,13 @@ const CARD_DATA = {{
   {', '.join(f"'bar-mod-{s(m).replace(' ','_').replace('&amp;','AND').replace('&','AND')}': {{ title: '{s(m)} Module — {c} Deltas', tableLabel: 'All {c} deltas for module {s(m)}', headers: ['Delta ID','Module','Description','Priority','Status','Type'], rows: [{chr(10)}{mod_rows_js(m)}{chr(10)}    ] }}" for m,c in sorted(mod_d.items(), key=lambda x:-x[1]))},
 
   // ── bar-drill: Parking Lots by Status ─────────────────────────────────────
-  {', '.join(f"'bar-plstat-{s(st).replace(' ','_').replace('-','_')}': {{ title: 'Parking Lots — {s(st)} ({c} items)', tableLabel: 'All PL items with status {s(st)}', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [{chr(10)}{pl_stat_rows_js('__cerrado__' if 'Cerrado' in st else st)}{chr(10)}    ] }}" for st,c in sorted(stat_p.items(), key=lambda x:-x[1]))}
+  {', '.join(f"'bar-plstat-{s(st).replace(' ','_').replace('-','_')}': {{ title: 'Parking Lots — {s(st)} ({c} items)', tableLabel: 'All PL items with status {s(st)}', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [{chr(10)}{pl_stat_rows_js('__cerrado__' if 'Cerrado' in st else st)}{chr(10)}    ] }}" for st,c in sorted(stat_p.items(), key=lambda x:-x[1]))},
+
+  // ── Open Priority table: per-delta detail cards ───────────────────────────
+  {', '.join(f"'delta-{s(r[0])}': {delta_detail_card_js(str(r[0] or '').strip())}" for r in open_p12 if r[0])},
+
+  // ── Pending PL table: per-module pending detail cards ─────────────────────
+  {_pending_mod_cards_js}
 }};
 
 const WS_CARDS = new Set(['ws-pp','ws-ba','ws-mmim','ws-co','ws-mmpur','ws-sd']);
@@ -1003,11 +1100,12 @@ const STATUS_COL = 6;
 
 function barDrillStatusCol(cardId) {{
   // returns the column index that holds Status for filter-pills, or -1 if no pills
-  if (WS_CARDS.has(cardId)) return 6;          // PL rows: col 6 = Status
-  if (cardId.startsWith('bar-mod-')) return 4;  // delta rows: col 4 = Status
-  if (cardId.startsWith('bar-type-')) return 3; // delta rows: col 3 = Status
-  if (cardId.startsWith('bar-plstat-')) return 6; // PL rows: col 6 = Status
-  return -1;
+  if (WS_CARDS.has(cardId)) return 6;              // PL rows: col 6 = Status
+  if (cardId.startsWith('bar-mod-')) return 4;      // delta rows: col 4 = Status
+  if (cardId.startsWith('bar-type-')) return 3;     // delta rows: col 3 = Status
+  if (cardId.startsWith('bar-plstat-')) return 6;   // PL rows: col 6 = Status
+  if (cardId.startsWith('pl-pending-mod-')) return 9; // pending PL: col 9 = Status
+  return -1;                                        // delta detail / no filter
 }}
 let currentCardId = null;
 let currentRows = [];
@@ -1019,7 +1117,12 @@ function openModal(cardId) {{
   currentCardId = cardId;
   currentRows = data.rows;
   activeFilter = 'all';
-  document.getElementById('modal-title').textContent = data.title + ' (' + data.rows.length + ' items)';
+  // wider modal for detail views and pending-PL tables
+  const isDetail = cardId.startsWith('delta-') || cardId.startsWith('pl-pending-mod-');
+  document.getElementById('modal-box').style.maxWidth = isDetail ? '960px' : '780px';
+  document.getElementById('modal-title').textContent = cardId.startsWith('delta-')
+    ? data.title
+    : data.title + ' (' + data.rows.length + ' items)';
   document.getElementById('modal-table-label').textContent = data.tableLabel;
   const thead = document.getElementById('modal-thead');
   thead.innerHTML = '<tr>' + data.headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
@@ -1053,6 +1156,17 @@ function renderFilteredTable() {{
   const tbody = document.getElementById('modal-tbody');
   const countEl = document.getElementById('modal-count');
   const stCol = barDrillStatusCol(currentCardId);
+
+  // Delta detail: key-value card — render with label column styled
+  if (currentCardId && currentCardId.startsWith('delta-')) {{
+    tbody.innerHTML = currentRows.map(row =>
+      '<tr><td style="font-weight:700;width:160px;color:var(--sap-grey);white-space:nowrap">' + row[0] +
+      '</td><td style="white-space:pre-wrap;word-break:break-word">' + row[1] + '</td></tr>'
+    ).join('');
+    if (countEl) countEl.textContent = '';
+    return;
+  }}
+
   if (activeFilter === 'all') {{
     if (stCol >= 0) {{
       const groups = {{}};

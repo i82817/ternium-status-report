@@ -96,6 +96,10 @@
   .bar-clickable { cursor:pointer; border-radius:4px; padding:2px 4px; margin:-2px -4px; transition:background 0.12s; }
   .bar-clickable:hover { background:var(--sap-light); }
   .bar-clickable:hover .bar-label { color:var(--sap-blue); }
+  .row-clickable { cursor:pointer; transition:background 0.12s; }
+  .row-clickable:hover { background:var(--sap-light) !important; }
+  .row-clickable td:first-child::after { content:' ▸'; font-size:10px; color:var(--sap-blue); opacity:0; transition:opacity 0.12s; }
+  .row-clickable:hover td:first-child::after { opacity:1; }
   .table-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
   .table-header { padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--sap-border); }
   .table-title { font-size:14px; font-weight:700; }
@@ -406,69 +410,72 @@
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Priority 1 &amp; 2 Open Deltas</span>
-      <span class="tag tag-red">8 items shown — resolve before Realize phase</span>
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:10px;color:var(--sap-blue);">▸ click a row to view full detail</span>
+        <span class="tag tag-red">8 items shown — resolve before Realize phase</span>
+      </span>
     </div>
     <table>
       <thead><tr><th>Delta ID</th><th>Module</th><th>Description</th><th>Priority</th><th>Type</th><th>Status</th></tr></thead>
       <tbody>
-        <tr>
-          <td><strong>DEL-MM-01</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-MM-01')" title="Click to view full details for DEL-MM-01">
+          <td><strong style="color:var(--sap-blue)">DEL-MM-01</strong></td>
           <td>MM-IM</td>
           <td>Gestión de materiales</td>
           <td><span class="tag tag-red">1 - Obligatorio</span></td>
           <td>Reporte</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-CO-46</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-CO-46')" title="Click to view full details for DEL-CO-46">
+          <td><strong style="color:var(--sap-blue)">DEL-CO-46</strong></td>
           <td>B&amp;A + CO</td>
           <td>Budget</td>
           <td><span class="tag tag-gold">2 - Importante</span></td>
           <td>Enhacement</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-MM-71</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-MM-71')" title="Click to view full details for DEL-MM-71">
+          <td><strong style="color:var(--sap-blue)">DEL-MM-71</strong></td>
           <td>MM-IM</td>
           <td>Gestión de materiales</td>
           <td><span class="tag tag-gold">2 - Importante</span></td>
           <td>Interfaz</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-PP-02</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-PP-02')" title="Click to view full details for DEL-PP-02">
+          <td><strong style="color:var(--sap-blue)">DEL-PP-02</strong></td>
           <td>PP</td>
           <td>Producción</td>
           <td><span class="tag tag-red">1 - Obligatorio</span></td>
           <td>Interfaz</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-B&amp;A-43</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-B&amp;A-43')" title="Click to view full details for DEL-B&amp;A-43">
+          <td><strong style="color:var(--sap-blue)">DEL-B&amp;A-43</strong></td>
           <td>B&amp;A</td>
           <td>Budget</td>
           <td><span class="tag tag-gold">2 - Importante</span></td>
           <td>Nueva Configuración</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-B&amp;A-44</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-B&amp;A-44')" title="Click to view full details for DEL-B&amp;A-44">
+          <td><strong style="color:var(--sap-blue)">DEL-B&amp;A-44</strong></td>
           <td>B&amp;A</td>
           <td>Budget</td>
           <td><span class="tag tag-gold">2 - Importante</span></td>
           <td>Nueva Configuración</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-B&amp;A-45</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-B&amp;A-45')" title="Click to view full details for DEL-B&amp;A-45">
+          <td><strong style="color:var(--sap-blue)">DEL-B&amp;A-45</strong></td>
           <td>B&amp;A</td>
           <td>Budget</td>
           <td><span class="tag tag-gold">2 - Importante</span></td>
           <td>Interfaz</td>
           <td><span class="tag tag-orange">Creado</span></td>
         </tr>
-        <tr>
-          <td><strong>DEL-B&amp;A-51</strong></td>
+        <tr class="row-clickable" onclick="openModal('delta-DEL-B&amp;A-51')" title="Click to view full details for DEL-B&amp;A-51">
+          <td><strong style="color:var(--sap-blue)">DEL-B&amp;A-51</strong></td>
           <td>B&amp;A</td>
           <td>Rentabilidad</td>
           <td><span class="tag tag-gold">2 - Importante</span></td>
@@ -483,55 +490,58 @@
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Items Awaiting Client or SAP Response</span>
-      <span class="tag tag-orange">38 open items</span>
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:10px;color:var(--sap-blue);">▸ click a row to view pending PL list</span>
+        <span class="tag tag-orange">38 open items</span>
+      </span>
     </div>
     <table>
       <thead><tr><th>Module</th><th>Pending Client</th><th>Pending SAP</th><th>Total Open</th><th>Priority Type</th></tr></thead>
       <tbody>
-        <tr>
-          <td><strong>MM-IM</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-MM_IM')" title="Click to view pending PLs for MM-IM">
+          <td><strong style="color:var(--sap-blue)">MM-IM</strong></td>
           <td>11</td>
           <td>1</td>
           <td><span class="tag tag-red">12</span></td>
           <td>Design Impact</td>
         </tr>
-        <tr>
-          <td><strong>PP</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-PP')" title="Click to view pending PLs for PP">
+          <td><strong style="color:var(--sap-blue)">PP</strong></td>
           <td>6</td>
           <td>0</td>
           <td><span class="tag tag-orange">6</span></td>
           <td>Design Impact</td>
         </tr>
-        <tr>
-          <td><strong>MM-PUR</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-MM_PUR')" title="Click to view pending PLs for MM-PUR">
+          <td><strong style="color:var(--sap-blue)">MM-PUR</strong></td>
           <td>3</td>
           <td>2</td>
           <td><span class="tag tag-orange">5</span></td>
           <td>Config / Other</td>
         </tr>
-        <tr>
-          <td><strong>AR-PP</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-AR_PP')" title="Click to view pending PLs for AR-PP">
+          <td><strong style="color:var(--sap-blue)">AR-PP</strong></td>
           <td>5</td>
           <td>0</td>
           <td><span class="tag tag-orange">5</span></td>
           <td>Design Impact</td>
         </tr>
-        <tr>
-          <td><strong>B&A</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-BANDA')" title="Click to view pending PLs for B&A">
+          <td><strong style="color:var(--sap-blue)">B&A</strong></td>
           <td>2</td>
           <td>2</td>
           <td><span class="tag tag-orange">4</span></td>
           <td>Config / Other</td>
         </tr>
-        <tr>
-          <td><strong>SD</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-SD')" title="Click to view pending PLs for SD">
+          <td><strong style="color:var(--sap-blue)">SD</strong></td>
           <td>4</td>
           <td>0</td>
           <td><span class="tag tag-orange">4</span></td>
           <td>Config / Other</td>
         </tr>
-        <tr>
-          <td><strong>CO</strong></td>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-CO')" title="Click to view pending PLs for CO">
+          <td><strong style="color:var(--sap-blue)">CO</strong></td>
           <td>2</td>
           <td>0</td>
           <td><span class="tag tag-green">2</span></td>
@@ -2280,6 +2290,173 @@ const CARD_DATA = {
       ['PL-AR-MM-199','AR-MM-IM','AR110 - Impacto en compras','Revisar proceso de baja a consumo interno y alta con X61 (Mov NCA 362 / 157','1 - Impacta el Diseño','1-Definición del Negocio','Aprobado']
     ] }, 'bar-plstat-Cambio_de_alcance': { title: 'Parking Lots — Cambio de alcance (1 items)', tableLabel: 'All PL items with status Cambio de alcance', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-B&amp;A-224','B&amp;A','Validación REX Sesión II- 28/09/26','Usuarias solicitan validaciones en carga archivo plano','2 - Impacta la Configuración','2-Definición para Configurar','Cambio de alcance']
+    ] },
+
+  // ── Open Priority table: per-delta detail cards ───────────────────────────
+  'delta-DEL-MM-01': { title: 'Delta DEL-MM-01 — MM-IM · 1 - Obligatorio', tableLabel: 'Generar un reporte que permita identificar si un lote determinado se encuentra d', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-MM-01'],
+      ['SAP Module','MM-IM'],
+      ['Priority','1 - Obligatorio'],
+      ['Status','Creado'],
+      ['Type','Reporte'],
+      ['Macro Process','Gestión de materiales'],
+      ['Process','MM - Gestión de Stock'],
+      ['Short Description','Generar un reporte que permita identificar si un lote determinado se encuentra definido como Elaborado o Semielaborado'],
+      ['Detailed Description','Este reporte debe ser acumulativo con el objetivo de realizar los ajustes necesarios para la exposición de los reportes.  Observación: se solicitó un desarrollo que realice la determinación contable dependiendo si el producto corresponde a Terminado o Semielaborado. Es necesario confirmar la necesidad por correo para que el equipo avance con la estimación.  07/07 -&gt; En base a lo conversado en la reunión de status de Deltas ejecutada, el equipo de TX informó que el Delta se encuentra despriorizado y su realización no se encuentra planicada para el Go-Live del track S/4.'],
+      ['Client Owner','Juan Carlos Carreón'],
+      ['SAP Owner','Jorge Ybarra Fabiana Frean'],
+      ['Created Date','2026-01-29 00:00:00']
+    ] }, 'delta-DEL-CO-46': { title: 'Delta DEL-CO-46 — B&amp;A + CO · 2 - Importante', tableLabel: 'CÁLCULO DE COSTO ESTÁNDAR SIN ESTRUCTURA CUANTITATIVA', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-CO-46'],
+      ['SAP Module','B&amp;A + CO'],
+      ['Priority','2 - Importante'],
+      ['Status','Creado'],
+      ['Type','Enhacement'],
+      ['Macro Process','Budget'],
+      ['Process','Budget - Costos del Producto'],
+      ['Short Description','CÁLCULO DE COSTO ESTÁNDAR SIN ESTRUCTURA CUANTITATIVA'],
+      ['Detailed Description','Carga de KKPAN en forma masiva, en base a los datos calculados en el proceso de Budget. (Se preve utilizar la función KKPI_BDC_COSTING_CREATE) Este delta está relacionado con DEL-B&amp;A-45, se aprueban ambos o ninguno. Es una unica solución con dos deltas.  07/07 -&gt; En base a lo conversado en la reunión de status de Deltas ejecutada, el Delta es necesario para el Go-Live de B&amp;A. No es mandatorio para el Go-Live S/4.'],
+      ['SAP Alternative','Sin retracción con upload en S/4Hana directo'],
+      ['Client Owner','Juan Carlos Carreon'],
+      ['SAP Owner','Fabio Capelini Maria Rodriguez Flavio Chiari'],
+      ['Created Date','2026-04-13 00:00:00']
+    ] }, 'delta-DEL-MM-71': { title: 'Delta DEL-MM-71 — MM-IM · 2 - Importante', tableLabel: 'Tratamiento de los movimientos del sistema NCA Granel', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-MM-71'],
+      ['SAP Module','MM-IM'],
+      ['Priority','2 - Importante'],
+      ['Status','Creado'],
+      ['Type','Interfaz'],
+      ['Macro Process','Gestión de materiales'],
+      ['Process','MM - Gestión de Stock'],
+      ['Short Description','Tratamiento de los movimientos del sistema NCA Granel'],
+      ['Detailed Description','En la revisión de los movimientos de NCA Granel se definió el tratamiento de los mismos.  Concepto General: El origen de la información es propia del sistema de NCA Granel. En este sistema no se tratan lotes ni Material Cluster, el código de material SAP se determinará en base al material de NCA Granel + la Calidad de dicho sistema Detalle de movimientos tratados: 1 - No se tratará desde NCA Granel, se procesa con el 105 de NCA Lotificados 26 - No se tratará desde NCA Granel, se procesa con el 871 de NCA Lotificados 27 y 28 - Se procesan en conjunto generando el 309 correspondiente en S/4Hana 25 - Se procesa generando un 201 en S/4Hana 35 y 36 - Se procesan en conjunto generando el 309 correspondiente en S/4Hana Detalles en el mail TX - Costos - Interfaz NCA: Escenarios Granel y Restauraciones del 5/5 y en el documento de movimientos de interfaz  07/07 -&gt; En base a lo conversado en la reunión de status de Deltas ejecutada, el equipo de TX informó que el Delta se encuentra despriorizado y su realización no se encuentra planicada para el Go-Live del track S/4.'],
+      ['SAP Alternative','Generación manual de los movimientos'],
+      ['Client Owner','Juan Pablo Echeverria'],
+      ['SAP Owner','Fabiana Frean'],
+      ['Created Date','2026-05-05 00:00:00']
+    ] }, 'delta-DEL-PP-02': { title: 'Delta DEL-PP-02 — PP · 1 - Obligatorio', tableLabel: 'MX - Orden Producción - Creación en sistema NCA MX', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-PP-02'],
+      ['SAP Module','PP'],
+      ['Priority','1 - Obligatorio'],
+      ['Status','Creado'],
+      ['Type','Interfaz'],
+      ['Macro Process','Producción'],
+      ['Process','PP - Abrir si corresponde'],
+      ['Short Description','MX - Orden Producción - Creación en sistema NCA MX'],
+      ['Detailed Description','Interfaz para la creación de órdenes de producción desde Sistema NCA MX a SAP S/4 Hana'],
+      ['SAP Owner','Pablo Chiarpenello'],
+      ['Created Date','2026-02-05 00:00:00'],
+      ['In SOW (Interfaz)','1 -PP - Producción Discreta Creación de Orden de producción (Flujo 1)']
+    ] }, 'delta-DEL-B&amp;A-43': { title: 'Delta DEL-B&amp;A-43 — B&amp;A · 2 - Importante', tableLabel: 'TARIFAS PLAN DE LAS ACTIVIDADES DE PRODUCCIÓN EN S/4HANA', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-B&amp;A-43'],
+      ['SAP Module','B&amp;A'],
+      ['Priority','2 - Importante'],
+      ['Status','Creado'],
+      ['Type','Nueva Configuración'],
+      ['Macro Process','Budget'],
+      ['Process','Budget - Costos del Producto'],
+      ['Short Description','TARIFAS PLAN DE LAS ACTIVIDADES DE PRODUCCIÓN EN S/4HANA'],
+      ['Detailed Description','Se solicita hacer una retraccíon de las tarifas planeadas de las actividades a S4.  No está en alcance.    Export JOB (De SAC a S/4Hana) C_ACTIVITYPEPLANCOSTRATE_SRV'],
+      ['SAP Alternative','Sin retracción con upload en S/4Hana directo'],
+      ['Client Owner','Juan Carlos Carreon'],
+      ['SAP Owner','Fabio Capelini Maria Rodriguez Flavio Chiari'],
+      ['Created Date','2026-04-13 00:00:00']
+    ] }, 'delta-DEL-B&amp;A-44': { title: 'Delta DEL-B&amp;A-44 — B&amp;A · 2 - Importante', tableLabel: 'PLAN EN LAS CUENTAS DE CENTROS DE COSTO EN S/4HANA', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-B&amp;A-44'],
+      ['SAP Module','B&amp;A'],
+      ['Priority','2 - Importante'],
+      ['Status','Creado'],
+      ['Type','Nueva Configuración'],
+      ['Macro Process','Budget'],
+      ['Process','Budget - Costos del Producto'],
+      ['Short Description','PLAN EN LAS CUENTAS DE CENTROS DE COSTO EN S/4HANA'],
+      ['Detailed Description','Se solicita hacer una retraccíon de los centros de costos de cuentas a S4.  No está en alcance.    Export JOB (De SAC a S/4Hana) API_FINANCIALPLANDATA_SRV'],
+      ['SAP Alternative','Sin retracción con upload en S/4Hana directo'],
+      ['Client Owner','Juan Carlos Carreon'],
+      ['SAP Owner','Fabio Capelini Maria Rodriguez Flavio Chiari'],
+      ['Created Date','2026-04-13 00:00:00']
+    ] }, 'delta-DEL-B&amp;A-45': { title: 'Delta DEL-B&amp;A-45 — B&amp;A · 2 - Importante', tableLabel: 'CÁLCULO DE COSTO ESTÁNDAR SIN ESTRUCTURA CUANTITATIVA', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-B&amp;A-45'],
+      ['SAP Module','B&amp;A'],
+      ['Priority','2 - Importante'],
+      ['Status','Creado'],
+      ['Type','Interfaz'],
+      ['Macro Process','Budget'],
+      ['Process','Budget - Costos del Producto'],
+      ['Short Description','CÁLCULO DE COSTO ESTÁNDAR SIN ESTRUCTURA CUANTITATIVA'],
+      ['Detailed Description','Interfaz del cálculo de costo realizado en módulo Budget, el cual deberá grabar datos en tabla Z para ejecución posterior de la KKPAN en forma correcta, respetando el cascadeo del cálculo del costo Este delta está relacionado con DEL-CO-46, se aprueban ambos o ninguno. Es una unica solución con dos deltas.'],
+      ['SAP Alternative','Sin retracción con upload en S/4Hana directo'],
+      ['Client Owner','Juan Carlos Carreon'],
+      ['SAP Owner','Fabio Capelini Maria Rodriguez Flavio Chiari'],
+      ['Created Date','2026-04-13 00:00:00']
+    ] }, 'delta-DEL-B&amp;A-51': { title: 'Delta DEL-B&amp;A-51 — B&amp;A · 2 - Importante', tableLabel: 'Fuentes Rentabilidad - ventas y costos', headers: ['Field','Value'], rows: [
+      ['Delta ID','DEL-B&amp;A-51'],
+      ['SAP Module','B&amp;A'],
+      ['Priority','2 - Importante'],
+      ['Status','Creado'],
+      ['Type','Nueva Configuración'],
+      ['Macro Process','Rentabilidad'],
+      ['Process','Rentabilidad'],
+      ['Short Description','Fuentes Rentabilidad - ventas y costos'],
+      ['Detailed Description','Ternium solicita la creación de una base consolidada de información que viene de diferentes fuentes SQL, SAP, NoSAP, Desarrollos Z, DWH para luego desde esa base generar reportes.  Base de contribución contendría información relacionada a la base de ventas, precios, comisiones, etc. Adicional se tienen otras fuentes para costos logisticos, variación de precios, etc.  Dentro de las fuentes definidas en el alcance para rentabilidad se tiene: SAP PaPM y SAP S/4HANA: NPS, CPS, FPS.  Cualquier información adicional que no este dentro de las fuentes mencionadas serán cargadas a SAP DSP por medio de archivos planos con valor final (no se contemplan cálculos).'],
+      ['SAP Alternative','Carga valor final requerido para el proceso de rentabilidad por archivo plano'],
+      ['Client Owner','Juan Carlos Carreon'],
+      ['SAP Owner','Fabio Capelini Maria Rodriguez Alejandro Lopez Hernando Rivera'],
+      ['Created Date','2026-04-14 00:00:00']
+    ] },
+
+  // ── Pending PL table: per-module pending detail cards ─────────────────────
+    'pl-pending-mod-MM_IM': { title: 'Pending PLs — MM-IM (12 open)', tableLabel: 'Parking Lots pending resolution for module MM-IM', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-MM-045','MM-IM','040 - Contabilidad de Gastos Generales y Cálc','Cambio de característica del lote de Semielaborado o Terminado','Definir el tratamiento que hace NCA para la característica del lote de Terminado','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Jorge Ybarra','Juan Pablo Echevarría','Pendiente Cliente'],
+      ['PL-CO-101','MM-IM','020 - Maestro de materiales','Análisis de impacto por definición UMB y UMA','A partir de la definición tomada en el PL 015, evaluar internamente los impactos','4 - Otros','2-Definición para Configurar','Jorge Ybarra','Valentin Doldan','Pendiente Cliente'],
+      ['PL-AR-MM-235','MM-IM','AR110 - Impacto en compras','Uso de org de compras para la generación de STOs entre plantas','Definidición de si es requerido una org de compras adicional para la creación de','2 - Impacta la Configuración','1-Definición del Negocio','Jorge Ybarra','Matias/ Valentin','Pendiente Cliente'],
+      ['PL-BR-AMI-EO-236','MM-IM','WSBR010-Estructura Organizativa','Confirmación de los centros en alcance para cada paíse de la 3r fase','ar','3 - Impacto Organizacional','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','Definir que pais, centro y almacén considerarán el stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-239','MM-IM','WSBR020-Maestro de Materiales','Confirmación de los tipos de material por pais','Confirmar si los tipos de materiales mapeados por pais son los que estan dentro ','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-240','MM-IM','WSBR020-Maestro de Materiales','Impacto del costo de flete en el proceso de traslado de material entre plan','Revisar como se gestiona el costo del flete en tralsado y si este imapcta en el ','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-241','MM-IM','WSBR020-Maestro de Materiales','Manejo de la estrategia para el uso de Material Cluster en cada país','Analisis interno sobre que paises usarán el MC (aquellos con NCA u otro sistema)','2 - Impacta la Configuración','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hacen me','1 - Impacta el Diseño','2-Definición para Configurar','Luis Carlos Fagua','Brasil - Igor Leandro da Silva Araújo','Pendiente SAP'],
+      ['PL-BR-AMI-MM-250','MM-IM','WSBR110-Impacto en compras y traslados','Verificar si los materiales ya cumplen con el control de precio y no sufren','Verificar que no se tendrá cambio en controles de precio en materiales','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-251','MM-IM','WSBR110-Impacto en compras y traslados','Confirmar que Exitos este contemplado el ajuste de precios para todos los p','Confirmar que el ajuste de Exiros en precios, abarque a todos los paises, deltas','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Andressa Predebon','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-259','MM-IM','WSBR110-Impacto en compras y traslados','Envio de meetin para revisar el proceso de traslados, maquila en EU','Lanzar una sesión especifica para revisar el proceso en EU sonre traslados y maq','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra, Luis Fagua','Andressa Predebon','Pendiente Cliente']
+    ] },
+  'pl-pending-mod-PP': { title: 'Pending PLs — PP (6 open)', tableLabel: 'Parking Lots pending resolution for module PP', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-PP-052','PP','042 - Datos Maestros PP (II)','Definición consumo de actividades','Definir cómo será el tratamiento vinculado al consumo de las actividades','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Pablo Chiarpenello Flavio Chiari','Juan Pablo Echevarría','Pendiente Cliente'],
+      ['PL-PP-165','PP','Reunion NCA Granel (4/5)','Definir código de material único a utilizar en interfaz de NCA Lotificados ','Los siguientes movimientos de NCA Lotificados y NCA Granel imputarán a este códi','2 - Impacta la Configuración','2-Definición para Configurar','','Juan Carlos Carreon','Pendiente Cliente'],
+      ['PL-PP-166','PP','Reunion NCA Granel (4/5)','Se debe definir como determinar el material en el movimiento 871 de NCA. Es','El movimiento 871 de NCA debe imputar a un código de material SAP que se determi','2 - Impacta la Configuración','2-Definición para Configurar','Juan Carlos Carreon','Juan Pablo Echevarria','Pendiente Cliente'],
+      ['PL-PP-167','PP','Reunion NCA Granel (4/5)','Revisar movimiento 2 de NCA Granel, para definir si debe ser tratado en la ','Revisar movimiento 2 de NCA Granel, para definir si debe ser tratado en la inter','2 - Impacta la Configuración','2-Definición para Configurar','Juan Carlos Carreon','Juan Pablo Echevarria','Pendiente Cliente'],
+      ['PL-PP-168','PP','Reunión Casos indentificados NCA (4/5)','Determinación de las características del material cluster para los movimien','Para este movimiento de NCA debe determinarse las caractéristicas del material c','2 - Impacta la Configuración','2-Definición para Configurar','','Juan Pablo Echevarria Juan Carlos Carreon','Pendiente Cliente'],
+      ['PL-BR-AMI-PP-243','PP','WSBR043 – Producción por Procesos','Proceso de Piso de planta  --&gt; MES  --&gt;. S/4HANA - Custo standard no ','No se calcula el Coste Standard adentro de SAP se debe analisar el proceso produ','1 - Impacta el Diseño','1-Definición del Negocio','Chiarpenello, Pablo','Brasil - Igor Leandro da Silva Araújo Lucas / Rayu.','Pendiente Cliente']
+    ] },
+  'pl-pending-mod-MM_PUR': { title: 'Pending PLs — MM-PUR (5 open)', tableLabel: 'Parking Lots pending resolution for module MM-PUR', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','Evaluar el impacto técnico asociado a aumentar la volumetría de materiales al ag','4 - Otros','2-Definición para Configurar','Jorge Ybarra','Comunicar nueva volumetría estimada: Roberto Gonzalez  Análisis impacto: Team SAP','Pendiente SAP'],
+      ['PL-MM-020','MM-PUR','020 - Maestro de materiales','Impacto de cambio de código de material en países con PP y Ventas implement','Análisis de impacto en los países donde ya tienen PP y Ventas implementado en op','4 - Otros','2-Definición para Configurar','Jorge Ybarra Track analytcs','Juan Andres Alvarez (CO) / Valentín Doldan / Cristian Gonzalez (CA) / Jose Rodriguez (USA) / Rayl (BR)','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','Revisar si hace falta abrir los materiales por línea productiva o si la informac','1 - Impacta el Diseño','2-Definición para Configurar','Sidney Jonas Neumann','','Pendiente SAP'],
+      ['PL-BR-AMI-MM-271','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','Definir valores de la característica de proveedor en Material cluster para USA c','1 - Impacta el Diseño','2-Definición para Configurar','Juan Carlos Carreon','','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-272','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','Definir si se crean para todos los proveedores los materiales cluster o con un a','1 - Impacta el Diseño','2-Definición para Configurar','Valentín doldan','','Pendiente Cliente']
+    ] },
+  'pl-pending-mod-AR_PP': { title: 'Pending PLs — AR-PP (5 open)', tableLabel: 'Parking Lots pending resolution for module AR-PP', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-AR-PP-186','AR-PP','AR090 - Interfaces','Como el SGL registra el grado de acero a la salida del convertidor y como l','Como el SGL registra el grado de acero a la salida del convertidor y como lo reg','1 - Impacta el Diseño','2-Definición para Configurar','','Juan Pablo Echevarría','Pendiente Cliente'],
+      ['PL-AR-PP-187','AR-PP','AR090 - Interfaces','SGL Argentina - Revision de la información de consumos','SGL Argentina - Revision de la información de consumos para definir si hace falt','1 - Impacta el Diseño','2-Definición para Configurar','','Bruno Fidalgo','Pendiente Cliente'],
+      ['PL-AR-PP-192','AR-PP','AR090 - Interfaces','No todas las líneas tienen el cierre metálico','Tratamiento a dar por el hecho de no tener cierre metálico de algunas líneas. Es','1 - Impacta el Diseño','2-Definición para Configurar','','Juan Pablo Echevarría','Pendiente Cliente'],
+      ['PL-AR-MM-217','AR-PP','AR090 - Interfaces','Revisión de líneas manuales y sus procesos.','Revisión de líneas manuales y sus procesos. (SGL)','1 - Impacta el Diseño','1-Definición del Negocio','','Analia','Pendiente Cliente'],
+      ['PL-AR-MM-218','AR-PP','AR090 - Interfaces','Partición/Agrupación de lotes. Revisar casos de impacto para Argentina. Mov','Ver Mov. 133 de renombre de materiales.','1 - Impacta el Diseño','1-Definición del Negocio','','Ezequiel Dutra','Pendiente Cliente']
+    ] },
+  'pl-pending-mod-BANDA': { title: 'Pending PLs — B&amp;A (4 open)', tableLabel: 'Parking Lots pending resolution for module B&amp;A', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-B&amp;A-231','B&amp;A','Validación REX Sesión III- 01/10/26','Inclusion de derivación de cuenta para planificación de Material en la part','Inclusion de derivación de cuenta para planificación de Material en la parte de ','2 - Impacta la Configuración','2-Definición para Configurar','Mauricio Moreno Maria Rodriguez','Leandro Tiseira Andressa Predebon','Pendiente Cliente'],
+      ['PL-B&amp;A-260','B&amp;A','Taller validacion Costos SF y GG (28/10)','Incluir botón de Eliminar en ajustes de variaciones','En sesión Ternium solicita incluir botón de Eliminar en ajustes de variaciones','2 - Impacta la Configuración','2-Definición para Configurar','Juan Plazas','','Pendiente SAP'],
+      ['PL-B&amp;A-261','B&amp;A','Taller validacion Costos SF y GG (29/10)','Iconos a usar en data actions','Ternium solicita incluir iconos en los data actions para facilitar interacción c','2 - Impacta la Configuración','2-Definición para Configurar','Juan Plazas','','Pendiente Cliente'],
+      ['PL-B&amp;A-262','B&amp;A','Show &amp; Tell Mano de Obra (30/10)','Simplificación de pasos en data actions','Ternium queda pendiente de indicar si la secuencia de pasos en un data action de','2 - Impacta la Configuración','2-Definición para Configurar','Juan Plazas','','Pendiente SAP']
+    ] },
+  'pl-pending-mod-SD': { title: 'Pending PLs — SD (4 open)', tableLabel: 'Parking Lots pending resolution for module SD', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-BR-AMI-SD-244','SD','WSBR045 Costo de Venta','Identificar las voces originarias para rastrear el origen de un material. (','Se requiere identificar como rastrear o con que datos, lotes, materiales, desde ','4 - Otros','3-Otros','Ingrid Ordaz','','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-252','SD','WSBR045 Costo de Venta','Centros de beneficio en materiales de AMI','Validar y confirmar que los materiales que se usan en la venta cuentan en la vis','2 - Impacta la Configuración','1-Definición del Negocio','Ingrid Ordaz','','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-253','SD','WSBR045 Costo de Venta','Determinación de cuentas en OBYC para mov. 601 SM','Confirmar por los diferentes paises de AMI las cuentas realcionadas al movimient','2 - Impacta la Configuración','1-Definición del Negocio','Ingrid Ordaz','&quot;Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo&quot;','Pendiente Cliente'],
+      ['PL-BR-AMI-SD-254','SD','WSBR045 Costo de Venta','Determinación de categorías de valoración','Definir si las categorias de valoración de los materiales coinciden con las cate','2 - Impacta la Configuración','1-Definición del Negocio','Ingrid Ordaz','&quot;Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo&quot;','Pendiente Cliente']
+    ] },
+  'pl-pending-mod-CO': { title: 'Pending PLs — CO (2 open)', tableLabel: 'Parking Lots pending resolution for module CO', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-CO-030','CO','030 - Datos maestros de contabilidad y costos','Definición cuentas contables OBYC','Definición de nuevas cuentas: OBYC por materiales cluster','9 - Realize: Impacto Alto','2-Definición para Configurar','Flavio Chiari','Juan Carlos Carreon Franco Dentis (Luxemburgo)','Pendiente Cliente'],
+      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','Verificar que los tipos de materiales definidos en el template global para contr','2 - Impacta la Configuración','1-Definición del Negocio','Luis Carlos Fagua','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente']
     ] }
 };
 
@@ -2288,11 +2465,12 @@ const STATUS_COL = 6;
 
 function barDrillStatusCol(cardId) {
   // returns the column index that holds Status for filter-pills, or -1 if no pills
-  if (WS_CARDS.has(cardId)) return 6;          // PL rows: col 6 = Status
-  if (cardId.startsWith('bar-mod-')) return 4;  // delta rows: col 4 = Status
-  if (cardId.startsWith('bar-type-')) return 3; // delta rows: col 3 = Status
-  if (cardId.startsWith('bar-plstat-')) return 6; // PL rows: col 6 = Status
-  return -1;
+  if (WS_CARDS.has(cardId)) return 6;              // PL rows: col 6 = Status
+  if (cardId.startsWith('bar-mod-')) return 4;      // delta rows: col 4 = Status
+  if (cardId.startsWith('bar-type-')) return 3;     // delta rows: col 3 = Status
+  if (cardId.startsWith('bar-plstat-')) return 6;   // PL rows: col 6 = Status
+  if (cardId.startsWith('pl-pending-mod-')) return 9; // pending PL: col 9 = Status
+  return -1;                                        // delta detail / no filter
 }
 let currentCardId = null;
 let currentRows = [];
@@ -2304,7 +2482,12 @@ function openModal(cardId) {
   currentCardId = cardId;
   currentRows = data.rows;
   activeFilter = 'all';
-  document.getElementById('modal-title').textContent = data.title + ' (' + data.rows.length + ' items)';
+  // wider modal for detail views and pending-PL tables
+  const isDetail = cardId.startsWith('delta-') || cardId.startsWith('pl-pending-mod-');
+  document.getElementById('modal-box').style.maxWidth = isDetail ? '960px' : '780px';
+  document.getElementById('modal-title').textContent = cardId.startsWith('delta-')
+    ? data.title
+    : data.title + ' (' + data.rows.length + ' items)';
   document.getElementById('modal-table-label').textContent = data.tableLabel;
   const thead = document.getElementById('modal-thead');
   thead.innerHTML = '<tr>' + data.headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
@@ -2338,6 +2521,17 @@ function renderFilteredTable() {
   const tbody = document.getElementById('modal-tbody');
   const countEl = document.getElementById('modal-count');
   const stCol = barDrillStatusCol(currentCardId);
+
+  // Delta detail: key-value card — render with label column styled
+  if (currentCardId && currentCardId.startsWith('delta-')) {
+    tbody.innerHTML = currentRows.map(row =>
+      '<tr><td style="font-weight:700;width:160px;color:var(--sap-grey);white-space:nowrap">' + row[0] +
+      '</td><td style="white-space:pre-wrap;word-break:break-word">' + row[1] + '</td></tr>'
+    ).join('');
+    if (countEl) countEl.textContent = '';
+    return;
+  }
+
   if (activeFilter === 'all') {
     if (stCol >= 0) {
       const groups = {};
