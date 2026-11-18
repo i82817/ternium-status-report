@@ -110,6 +110,82 @@ co_bar    = ws_delta_bar({'CO', 'co', 'AR-CO', 'B&A + CO'})
 mmpur_bar = ws_delta_bar({'MM-PUR', 'AR-MM-PUR'})
 sd_bar    = ws_delta_bar({'SD', 'AR-SD'})
 
+# ── PROJECT PLAN (SAP Activate phases + milestones) ───────────────────────────
+from datetime import date as _date
+
+_today = _date.today()
+
+_phases = [
+    ('Preparación', _date(2026, 10, 12), _date(2026, 10, 23),
+     'Gobernanza, kickoff, alcance FIN_CO_COGM, acceso sistemas, logística talleres.'),
+    ('Exploración',  _date(2026, 10, 26), _date(2026, 11, 20),
+     'Talleres Fit-to-Standard BA001–BA110 (BR/AMI), BPD, backlog WRICEF, cierre de deltas.'),
+    ('Realización',  _date(2026, 11, 23), _date(2027,  3,  5),
+     'Configuración, construcción WRICEF, pruebas unitarias/integración (Ciclo 1+2), UAT, QG3.'),
+    ('Despliegue',   _date(2027,  3,  8), _date(2027,  4,  2),
+     'Cutover, capacitación usuarios finales, dry run #2, Go-No-Go, Go-Live 4 países.'),
+    ('Operación',    _date(2027,  4,  5), _date(2027,  5, 10),
+     'Hypercare, resolución incidencias, primer cierre de período, cierre del proyecto.'),
+]
+
+_milestones = [
+    ('12 Oct 2026', 'Inicio del proyecto (kickoff)',                        'Preparación'),
+    ('23 Oct 2026', 'Fin Preparación — estándares del proyecto acordados',  'Preparación'),
+    ('20 Nov 2026', 'Fin Exploración — aprobación del diseño',              'Exploración'),
+    ('23 Dic 2026', 'Configuración y pruebas unitarias completas',          'Realización'),
+    ('05 Mar 2027', 'Aprobación de UAT / QG3 — Quality Gate Realización',  'Realización'),
+    ('24 Mar 2027', 'Revisión de preparación Go-Live / Go-No-Go',          'Despliegue'),
+    ('02 Abr 2027', 'GO-LIVE — FIN_CO_COGM activado en BR · CO · GT · US', 'Despliegue'),
+    ('10 May 2027', 'Transición a soporte / cierre del proyecto',           'Operación'),
+]
+
+_milestone_dates = [
+    _date(2026, 10, 12), _date(2026, 10, 23), _date(2026, 11, 20),
+    _date(2026, 12, 23), _date(2027,  3,  5), _date(2027,  3, 24),
+    _date(2027,  4,  2), _date(2027,  5, 10),
+]
+
+def _phase_status(start, end):
+    if _today < start:   return 'pending'
+    if _today >= end:    return 'done'
+    return 'active'
+
+def _phase_pct(start, end):
+    if _today < start:  return 0
+    if _today >= end:   return 100
+    return round((_today - start).days / max((end - start).days, 1) * 100)
+
+_phase_html_parts = []
+for _name, _s, _e, _desc in _phases:
+    _st  = _phase_status(_s, _e)
+    _pct = _phase_pct(_s, _e)
+    _bar_cls = 'fill-green' if _st == 'done' else ('fill-gold' if _st == 'active' else 'fill-grey')
+    _pill    = '✓ Complete' if _st == 'done' else ('⚡ In Progress' if _st == 'active' else 'Upcoming')
+    _pill_cls = 'pill-done' if _st == 'done' else ('pill-active' if _st == 'active' else 'pill-pending')
+    _phase_cls = 'done' if _st == 'done' else ('active' if _st == 'active' else 'pending')
+    _num = _phases.index((_name, _s, _e, _desc)) + 1
+    _date_str = f'{_s.strftime("%-d %b %Y")} → {_e.strftime("%-d %b %Y")}'
+    _phase_html_parts.append(f'''    <div class="phase {_phase_cls}">
+      <div class="phase-num">{_num}</div><div class="phase-name">{_name}</div>
+      <div class="phase-desc">{_desc}</div>
+      <div style="font-size:10px;color:var(--sap-grey);margin-bottom:8px;">{_date_str}</div>
+      <span class="phase-status-pill {_pill_cls}">{_pill}</span>
+      <div class="phase-progress"><div class="phase-pct">{_pct}%</div><div class="progress-bar-bg"><div class="progress-bar-fill {_bar_cls}" style="width:{_pct}%"></div></div></div>
+    </div>''')
+phases_html = '\n'.join(_phase_html_parts)
+
+_ms_rows_html = ''
+for (_dt_str, _label, _phase), _dt in zip(_milestones, _milestone_dates):
+    _done = _dt <= _today
+    _tag_cls = 'tag-green' if _done else ('tag-orange' if _dt <= _today + __import__('datetime').timedelta(days=14) else 'tag-grey')
+    _status_label = '✓ Done' if _done else ('⚡ Upcoming' if _dt <= _today + __import__('datetime').timedelta(days=30) else 'Planned')
+    _ms_rows_html += f'''        <tr>
+          <td>{_dt_str}</td>
+          <td>{_label}</td>
+          <td>{_phase}</td>
+          <td><span class="tag {_tag_cls}">{_status_label}</span></td>
+        </tr>\n'''
+
 # ── MATERIAL CLUSTER ──────────────────────────────────────────────────────────
 wb_mc  = openpyxl.load_workbook(MC_FILE, data_only=True)
 ws_mc  = wb_mc['Sheet1']
@@ -408,7 +484,7 @@ html = f'''<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ternium — SAP S/4HANA Implementation Status Report</title>
+<title>Ternium — FIN_CO_COGM Implementation Status Report</title>
 <style>
   :root {{
     --sap-blue:#0070F2; --sap-dark:#1D2D3E; --sap-mid:#354A5E; --sap-light:#EBF8FF;
@@ -526,20 +602,21 @@ html = f'''<!DOCTYPE html>
 <header class="header">
   <div class="header-brand">
     <span class="sap-logo">SAP</span>
-    <span class="header-title">Ternium — S/4HANA Implementation Status Report</span>
+    <span class="header-title">Ternium — FIN_CO_COGM Implementation Status Report</span>
   </div>
   <span class="report-date">Report Date: {today}</span>
 </header>
 
 <div class="hero">
-  <h1>Ternium S/4HANA Implementation</h1>
-  <p>FIN · CO · COGM · B&amp;A workstreams — Brazil, Americas, Spain. SAP Activate Methodology — 5-Phase Governance View.</p>
+  <h1>Ternium S/4HANA Implementation — FIN_CO_COGM Activation</h1>
+  <p>FIN · CO · COGM · B&amp;A workstreams — Brasil, Colombia, Guatemala, Estados Unidos. SAP Activate Methodology — 5-Phase Governance View. Go-Live: 02 Abr 2027.</p>
   <div class="hero-badges">
     <span class="badge">SAP Activate</span>
     <span class="badge">FIN · CO · COGM · B&amp;A</span>
-    <span class="badge">BR · AMI · ES</span>
+    <span class="badge">BR · CO · GT · US</span>
     <span class="badge">{total_d} Deltas</span>
     <span class="badge">{total_p} Parking Lots</span>
+    <span class="badge">Go-Live 02 Abr 2027</span>
   </div>
 </div>
 
@@ -597,38 +674,22 @@ html = f'''<!DOCTYPE html>
     </div>
   </div>
 
-  <div class="section-title"><span class="section-icon">▶</span> SAP Activate — 5 Phases</div>
+  <div class="section-title"><span class="section-icon">▶</span> SAP Activate — 5 Phases <span style="font-size:11px;font-weight:400;color:var(--sap-grey);margin-left:8px;">Source: Project_Plan_FIN_CO_COGM_Activate_BR_AMI_ES-VR02 · BR · CO · GT · US</span></div>
   <div class="phase-timeline">
-    <div class="phase done">
-      <div class="phase-num">1</div><div class="phase-name">Discover</div>
-      <div class="phase-desc">Fit-to-standard workshops, initial scoping, stakeholder alignment, system demo.</div>
-      <span class="phase-status-pill pill-done">✓ Complete</span>
-      <div class="phase-progress"><div class="phase-pct">100%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:100%"></div></div></div>
+{phases_html}
+  </div>
+
+  <div class="section-title" style="margin-top:24px"><span class="section-icon">◆</span> Key Milestones</div>
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-title">Project Milestones — FIN_CO_COGM Activation · Go-Live 02 Apr 2027</span>
+      <span class="tag tag-blue">BR · CO · GT · US</span>
     </div>
-    <div class="phase done">
-      <div class="phase-num">2</div><div class="phase-name">Prepare</div>
-      <div class="phase-desc">Project governance, infrastructure setup, team onboarding, sandbox provisioning.</div>
-      <span class="phase-status-pill pill-done">✓ Complete</span>
-      <div class="phase-progress"><div class="phase-pct">100%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:100%"></div></div></div>
-    </div>
-    <div class="phase active">
-      <div class="phase-num">3</div><div class="phase-name">Explore</div>
-      <div class="phase-desc">Business process workshops, delta/GAP identification, parking lots resolution, backlog build.</div>
-      <span class="phase-status-pill pill-active">⚡ In Progress</span>
-      <div class="phase-progress"><div class="phase-pct">~72%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-gold" style="width:72%"></div></div></div>
-    </div>
-    <div class="phase pending">
-      <div class="phase-num">4</div><div class="phase-name">Realize</div>
-      <div class="phase-desc">Configuration, development of enhancements &amp; interfaces, unit testing, UAT execution.</div>
-      <span class="phase-status-pill pill-pending">Upcoming</span>
-      <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
-    </div>
-    <div class="phase pending">
-      <div class="phase-num">5</div><div class="phase-name">Deploy</div>
-      <div class="phase-desc">Cutover execution, data migration, GoLive, hypercare &amp; stabilization.</div>
-      <span class="phase-status-pill pill-pending">Upcoming</span>
-      <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
-    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Milestone</th><th>Phase</th><th>Status</th></tr></thead>
+      <tbody>
+{_ms_rows_html}      </tbody>
+    </table>
   </div>
 
   <div class="section-title"><span class="section-icon">▤</span> Workstream Status</div>
@@ -862,7 +923,7 @@ html = f'''<!DOCTYPE html>
 </main>
 
 <footer>
-  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · {today} · SAP Global Delivery Hub Americas
+  Ternium FIN_CO_COGM Implementation Status Report · Auto-generated from source xlsx · {today} · SAP Global Delivery Hub Americas
 </footer>
 
 <!-- MODAL -->

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ternium — SAP S/4HANA Implementation Status Report</title>
+<title>Ternium — FIN_CO_COGM Implementation Status Report</title>
 <style>
   :root {
     --sap-blue:#0070F2; --sap-dark:#1D2D3E; --sap-mid:#354A5E; --sap-light:#EBF8FF;
@@ -121,20 +121,21 @@
 <header class="header">
   <div class="header-brand">
     <span class="sap-logo">SAP</span>
-    <span class="header-title">Ternium — S/4HANA Implementation Status Report</span>
+    <span class="header-title">Ternium — FIN_CO_COGM Implementation Status Report</span>
   </div>
   <span class="report-date">Report Date: November 18, 2026</span>
 </header>
 
 <div class="hero">
-  <h1>Ternium S/4HANA Implementation</h1>
-  <p>FIN · CO · COGM · B&amp;A workstreams — Brazil, Americas, Spain. SAP Activate Methodology — 5-Phase Governance View.</p>
+  <h1>Ternium S/4HANA Implementation — FIN_CO_COGM Activation</h1>
+  <p>FIN · CO · COGM · B&amp;A workstreams — Brasil, Colombia, Guatemala, Estados Unidos. SAP Activate Methodology — 5-Phase Governance View. Go-Live: 02 Abr 2027.</p>
   <div class="hero-badges">
     <span class="badge">SAP Activate</span>
     <span class="badge">FIN · CO · COGM · B&amp;A</span>
-    <span class="badge">BR · AMI · ES</span>
+    <span class="badge">BR · CO · GT · US</span>
     <span class="badge">107 Deltas</span>
     <span class="badge">269 Parking Lots</span>
+    <span class="badge">Go-Live 02 Abr 2027</span>
   </div>
 </div>
 
@@ -192,38 +193,104 @@
     </div>
   </div>
 
-  <div class="section-title"><span class="section-icon">▶</span> SAP Activate — 5 Phases</div>
+  <div class="section-title"><span class="section-icon">▶</span> SAP Activate — 5 Phases <span style="font-size:11px;font-weight:400;color:var(--sap-grey);margin-left:8px;">Source: Project_Plan_FIN_CO_COGM_Activate_BR_AMI_ES-VR02 · BR · CO · GT · US</span></div>
   <div class="phase-timeline">
     <div class="phase done">
-      <div class="phase-num">1</div><div class="phase-name">Discover</div>
-      <div class="phase-desc">Fit-to-standard workshops, initial scoping, stakeholder alignment, system demo.</div>
-      <span class="phase-status-pill pill-done">✓ Complete</span>
-      <div class="phase-progress"><div class="phase-pct">100%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:100%"></div></div></div>
-    </div>
-    <div class="phase done">
-      <div class="phase-num">2</div><div class="phase-name">Prepare</div>
-      <div class="phase-desc">Project governance, infrastructure setup, team onboarding, sandbox provisioning.</div>
+      <div class="phase-num">1</div><div class="phase-name">Preparación</div>
+      <div class="phase-desc">Gobernanza, kickoff, alcance FIN_CO_COGM, acceso sistemas, logística talleres.</div>
+      <div style="font-size:10px;color:var(--sap-grey);margin-bottom:8px;">12 Oct 2026 → 23 Oct 2026</div>
       <span class="phase-status-pill pill-done">✓ Complete</span>
       <div class="phase-progress"><div class="phase-pct">100%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:100%"></div></div></div>
     </div>
     <div class="phase active">
-      <div class="phase-num">3</div><div class="phase-name">Explore</div>
-      <div class="phase-desc">Business process workshops, delta/GAP identification, parking lots resolution, backlog build.</div>
+      <div class="phase-num">2</div><div class="phase-name">Exploración</div>
+      <div class="phase-desc">Talleres Fit-to-Standard BA001–BA110 (BR/AMI), BPD, backlog WRICEF, cierre de deltas.</div>
+      <div style="font-size:10px;color:var(--sap-grey);margin-bottom:8px;">26 Oct 2026 → 20 Nov 2026</div>
       <span class="phase-status-pill pill-active">⚡ In Progress</span>
-      <div class="phase-progress"><div class="phase-pct">~72%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-gold" style="width:72%"></div></div></div>
+      <div class="phase-progress"><div class="phase-pct">92%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-gold" style="width:92%"></div></div></div>
     </div>
     <div class="phase pending">
-      <div class="phase-num">4</div><div class="phase-name">Realize</div>
-      <div class="phase-desc">Configuration, development of enhancements &amp; interfaces, unit testing, UAT execution.</div>
+      <div class="phase-num">3</div><div class="phase-name">Realización</div>
+      <div class="phase-desc">Configuración, construcción WRICEF, pruebas unitarias/integración (Ciclo 1+2), UAT, QG3.</div>
+      <div style="font-size:10px;color:var(--sap-grey);margin-bottom:8px;">23 Nov 2026 → 5 Mar 2027</div>
       <span class="phase-status-pill pill-pending">Upcoming</span>
       <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
     </div>
     <div class="phase pending">
-      <div class="phase-num">5</div><div class="phase-name">Deploy</div>
-      <div class="phase-desc">Cutover execution, data migration, GoLive, hypercare &amp; stabilization.</div>
+      <div class="phase-num">4</div><div class="phase-name">Despliegue</div>
+      <div class="phase-desc">Cutover, capacitación usuarios finales, dry run #2, Go-No-Go, Go-Live 4 países.</div>
+      <div style="font-size:10px;color:var(--sap-grey);margin-bottom:8px;">8 Mar 2027 → 2 Apr 2027</div>
       <span class="phase-status-pill pill-pending">Upcoming</span>
       <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
     </div>
+    <div class="phase pending">
+      <div class="phase-num">5</div><div class="phase-name">Operación</div>
+      <div class="phase-desc">Hypercare, resolución incidencias, primer cierre de período, cierre del proyecto.</div>
+      <div style="font-size:10px;color:var(--sap-grey);margin-bottom:8px;">5 Apr 2027 → 10 May 2027</div>
+      <span class="phase-status-pill pill-pending">Upcoming</span>
+      <div class="phase-progress"><div class="phase-pct">0%</div><div class="progress-bar-bg"><div class="progress-bar-fill fill-grey" style="width:0%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:24px"><span class="section-icon">◆</span> Key Milestones</div>
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-title">Project Milestones — FIN_CO_COGM Activation · Go-Live 02 Apr 2027</span>
+      <span class="tag tag-blue">BR · CO · GT · US</span>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Milestone</th><th>Phase</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>12 Oct 2026</td>
+          <td>Inicio del proyecto (kickoff)</td>
+          <td>Preparación</td>
+          <td><span class="tag tag-green">✓ Done</span></td>
+        </tr>
+        <tr>
+          <td>23 Oct 2026</td>
+          <td>Fin Preparación — estándares del proyecto acordados</td>
+          <td>Preparación</td>
+          <td><span class="tag tag-green">✓ Done</span></td>
+        </tr>
+        <tr>
+          <td>20 Nov 2026</td>
+          <td>Fin Exploración — aprobación del diseño</td>
+          <td>Exploración</td>
+          <td><span class="tag tag-orange">⚡ Upcoming</span></td>
+        </tr>
+        <tr>
+          <td>23 Dic 2026</td>
+          <td>Configuración y pruebas unitarias completas</td>
+          <td>Realización</td>
+          <td><span class="tag tag-grey">Planned</span></td>
+        </tr>
+        <tr>
+          <td>05 Mar 2027</td>
+          <td>Aprobación de UAT / QG3 — Quality Gate Realización</td>
+          <td>Realización</td>
+          <td><span class="tag tag-grey">Planned</span></td>
+        </tr>
+        <tr>
+          <td>24 Mar 2027</td>
+          <td>Revisión de preparación Go-Live / Go-No-Go</td>
+          <td>Despliegue</td>
+          <td><span class="tag tag-grey">Planned</span></td>
+        </tr>
+        <tr>
+          <td>02 Abr 2027</td>
+          <td>GO-LIVE — FIN_CO_COGM activado en BR · CO · GT · US</td>
+          <td>Despliegue</td>
+          <td><span class="tag tag-grey">Planned</span></td>
+        </tr>
+        <tr>
+          <td>10 May 2027</td>
+          <td>Transición a soporte / cierre del proyecto</td>
+          <td>Operación</td>
+          <td><span class="tag tag-grey">Planned</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="section-title"><span class="section-icon">▤</span> Workstream Status</div>
@@ -715,7 +782,7 @@
 </main>
 
 <footer>
-  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · November 18, 2026 · SAP Global Delivery Hub Americas
+  Ternium FIN_CO_COGM Implementation Status Report · Auto-generated from source xlsx · November 18, 2026 · SAP Global Delivery Hub Americas
 </footer>
 
 <!-- MODAL -->
