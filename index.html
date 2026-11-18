@@ -123,7 +123,7 @@
     <span class="sap-logo">SAP</span>
     <span class="header-title">Ternium — S/4HANA Implementation Status Report</span>
   </div>
-  <span class="report-date">Report Date: November 17, 2026</span>
+  <span class="report-date">Report Date: November 18, 2026</span>
 </header>
 
 <div class="hero">
@@ -179,9 +179,9 @@
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card orange" data-card="pl-pending" onclick="openModal('pl-pending')">
-      <div class="kpi-value">38</div>
+      <div class="kpi-value">35</div>
       <div class="kpi-label">PLs Pending</div>
-      <div class="kpi-sub">33 client · 5 SAP</div>
+      <div class="kpi-sub">31 client · 4 SAP</div>
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card gold" data-card="interfaces" onclick="openModal('interfaces')">
@@ -395,10 +395,11 @@
       <div class="chart-title">Parking Lots by Status <span style="font-size:10px;color:var(--sap-blue);font-weight:400;margin-left:6px;">▸ click a bar to drill in</span></div>
       <div class="bar-chart">
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado')" title="Click to view Cerrado items"><span class="bar-label">Cerrado</span><div class="bar-track"><div class="bar-fill" style="width:81.4%;background:var(--sap-green);">219</div></div><span class="bar-count">219</span></div>
-        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_Cliente')" title="Click to view Pendiente Cliente items"><span class="bar-label">Pendiente Cliente</span><div class="bar-track"><div class="bar-fill" style="width:12.3%;background:var(--sap-red);">33</div></div><span class="bar-count">33</span></div>
-        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_SAP')" title="Click to view Pendiente SAP items"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:1.9%;background:var(--sap-orange);">5</div></div><span class="bar-count">5</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_Cliente')" title="Click to view Pendiente Cliente items"><span class="bar-label">Pendiente Cliente</span><div class="bar-track"><div class="bar-fill" style="width:11.5%;background:var(--sap-red);">31</div></div><span class="bar-count">31</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_SAP')" title="Click to view Pendiente SAP items"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--sap-orange);">4</div></div><span class="bar-count">4</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado_Pasa_a_Mejora_Continua')" title="Click to view Cerrado-Pasa a Mejora Continua items"><span class="bar-label">Cerrado-Pasa a Mejora Continua</span><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--sap-green);">4</div></div><span class="bar-count">4</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado_Duplicidad')" title="Click to view Cerrado-Duplicidad items"><span class="bar-label">Cerrado-Duplicidad</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-green);">3</div></div><span class="bar-count">3</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Entregado_por_TX')" title="Click to view Entregado por TX items"><span class="bar-label">Entregado por TX</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-grey);">3</div></div><span class="bar-count">3</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Entregado_por_SAP')" title="Click to view Entregado por SAP items"><span class="bar-label">Entregado por SAP</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-grey);">3</div></div><span class="bar-count">3</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Aprobado')" title="Click to view Aprobado items"><span class="bar-label">Aprobado</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cambio_de_alcance')" title="Click to view Cambio de alcance items"><span class="bar-label">Cambio de alcance</span><div class="bar-track"><div class="bar-fill" style="width:0.4%;background:var(--sap-grey);">1</div></div><span class="bar-count">1</span></div>
@@ -492,7 +493,7 @@
       <span class="table-title">Items Awaiting Client or SAP Response</span>
       <span style="display:flex;align-items:center;gap:12px">
         <span style="font-size:10px;color:var(--sap-blue);">▸ click a row to view pending PL list</span>
-        <span class="tag tag-orange">38 open items</span>
+        <span class="tag tag-orange">35 open items</span>
       </span>
     </div>
     <table>
@@ -500,9 +501,9 @@
       <tbody>
         <tr class="row-clickable" onclick="openModal('pl-pending-mod-MM_IM')" title="Click to view pending PLs for MM-IM">
           <td><strong style="color:var(--sap-blue)">MM-IM</strong></td>
-          <td>11</td>
-          <td>1</td>
-          <td><span class="tag tag-red">12</span></td>
+          <td>10</td>
+          <td>0</td>
+          <td><span class="tag tag-red">10</span></td>
           <td>Design Impact</td>
         </tr>
         <tr class="row-clickable" onclick="openModal('pl-pending-mod-PP')" title="Click to view pending PLs for PP">
@@ -542,9 +543,9 @@
         </tr>
         <tr class="row-clickable" onclick="openModal('pl-pending-mod-CO')" title="Click to view pending PLs for CO">
           <td><strong style="color:var(--sap-blue)">CO</strong></td>
-          <td>2</td>
+          <td>1</td>
           <td>0</td>
-          <td><span class="tag tag-green">2</span></td>
+          <td><span class="tag tag-green">1</span></td>
           <td>Config / Other</td>
         </tr>
       </tbody>
@@ -560,7 +561,7 @@
         <tbody>
           <tr><td>80 open deltas entering Realize with no approved solution</td><td><span class="tag tag-red">High</span></td><td>PMO</td></tr>
           <tr><td>NCA MX interfaces (mandatory PP deltas) undefined</td><td><span class="tag tag-red">High</span></td><td>PP WS Lead</td></tr>
-          <tr><td>33 PLs pending client response — blocking configuration</td><td><span class="tag tag-orange">Medium</span></td><td>Client SMEs</td></tr>
+          <tr><td>31 PLs pending client response — blocking configuration</td><td><span class="tag tag-orange">Medium</span></td><td>Client SMEs</td></tr>
           <tr><td>B&amp;A SAC scope creep (enhancements out of SOW)</td><td><span class="tag tag-orange">Medium</span></td><td>B&amp;A Lead</td></tr>
           <tr><td>CO PLs highest volume (56) — standard cost design risk</td><td><span class="tag tag-orange">Medium</span></td><td>CO WS Lead</td></tr>
         </tbody>
@@ -573,7 +574,7 @@
         <tbody>
           <tr><td>1</td><td>Prioritize resolution of 21 Priority-1 deltas before Realize entry</td><td>Explore → Realize</td></tr>
           <tr><td>2</td><td>Schedule interface design sessions for all 41 Interface-type deltas</td><td>Explore</td></tr>
-          <tr><td>3</td><td>Escalate 33 client-pending PLs in next Steering Committee</td><td>Governance</td></tr>
+          <tr><td>3</td><td>Escalate 31 client-pending PLs in next Steering Committee</td><td>Governance</td></tr>
           <tr><td>4</td><td>Conduct GoLive strategy session for Permanent vs Temporary GAPs</td><td>Explore</td></tr>
           <tr><td>5</td><td>Baseline project plan in MS Project with Realize milestones</td><td>Prepare → Realize</td></tr>
         </tbody>
@@ -584,7 +585,7 @@
 </main>
 
 <footer>
-  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · November 17, 2026 · SAP Global Delivery Hub Americas
+  Ternium S/4HANA Implementation Status Report · Auto-generated from source xlsx · November 18, 2026 · SAP Global Delivery Hub Americas
 </footer>
 
 <!-- MODAL -->
@@ -696,9 +697,9 @@ const CARD_DATA = {
     headers: ['Module', 'Total PLs', 'Closed', 'Pending Client', 'Pending SAP'],
     rows: [
       ['B&amp;A','70','65','2','2'],
-      ['CO','51','49','2','0'],
+      ['CO','51','49','1','0'],
       ['PP','34','28','6','0'],
-      ['MM-IM','28','14','11','1'],
+      ['MM-IM','28','14','10','0'],
       ['AR-PP','25','20','5','0'],
       ['MM-PUR','17','12','3','2'],
       ['SD','13','8','4','0'],
@@ -733,17 +734,17 @@ const CARD_DATA = {
     ]
   },
   'pl-pending': {
-    title: 'Parking Lots Pending — 38 Open',
+    title: 'Parking Lots Pending — 35 Open',
     tableLabel: 'Items awaiting response — escalation required',
     headers: ['Module', 'Pending Client', 'Pending SAP', 'Total', 'Risk'],
     rows: [
-      ['MM-IM','11','1','12','High'],
+      ['MM-IM','10','0','10','High'],
       ['PP','6','0','6','Medium'],
       ['MM-PUR','3','2','5','Medium'],
       ['AR-PP','5','0','5','Medium'],
       ['B&amp;A','2','2','4','Medium'],
       ['SD','4','0','4','Medium'],
-      ['CO','2','0','2','Low']
+      ['CO','1','0','1','Low']
     ]
   },
   'interfaces': {
@@ -1014,11 +1015,11 @@ const CARD_DATA = {
       ['PL-AR-MM-204','AR-MM-IM','AR110 - Impacto en compras','Verificar tratamiento de almacén en los traslados que se resuelven por orde','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
       ['PL-AR-MM-235','MM-IM','AR110 - Impacto en compras','Uso de org de compras para la generación de STOs entre plantas','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-EO-236','MM-IM','WSBR010-Estructura Organizativa','Confirmación de los centros en alcance para cada paíse de la 3r fase','3 - Impacto Organizacional','1-Definición del Negocio','Pendiente Cliente'],
-      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Entregado por TX'],
       ['PL-BR-AMI-MM-239','MM-IM','WSBR020-Maestro de Materiales','Confirmación de los tipos de material por pais','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-240','MM-IM','WSBR020-Maestro de Materiales','Impacto del costo de flete en el proceso de traslado de material entre plan','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-241','MM-IM','WSBR020-Maestro de Materiales','Manejo de la estrategia para el uso de Material Cluster en cada país','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
-      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','1 - Impacta el Diseño','2-Definición para Configurar','Entregado por TX'],
       ['PL-BR-AMI-MM-250','MM-IM','WSBR110-Impacto en compras y traslados','Verificar si los materiales ya cumplen con el control de precio y no sufren','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-251','MM-IM','WSBR110-Impacto en compras y traslados','Confirmar que Exitos este contemplado el ajuste de precios para todos los p','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-256','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de transportacion, importación para EU, CentroAmeri','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado-Duplicidad'],
@@ -1086,7 +1087,7 @@ const CARD_DATA = {
       ['PL-AR-MM-182','AR-CO','AR040 - Calculo de costos std y gastos genera','Confirmar que los elementos de costo definidos en el Template Global cubren','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
       ['PL-AR-MM-211','AR-CO','AR050 - Cierre de período - Centro','Armar ejemplo en sistema para distribucion con valores estadísticos','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-AR-MM-212','AR-CO','AR060 - Cálculo de costo real','Volumetría de materiales cluster','1 - Impacta el Diseño','3-Otros','Cerrado'],
-      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
+      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','2 - Impacta la Configuración','1-Definición del Negocio','Entregado por TX'],
       ['PL-BR-AMI-CO-242','CO','WSBR040 –  Cálculo de Costo Estándar y Contab','campo ZZPRECOSTD','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado']
     ]
   },
@@ -1788,7 +1789,7 @@ const CARD_DATA = {
       ['PL-B&amp;A-268','B&amp;A','Correo Ternium (6/11)','Cargar precios en monedas diferentes a USD.','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-269','B&amp;A','Correo Ternium (6/11)','Cargar en UM diferentes a la Unidad de medida base y que el programa convie','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-270','B&amp;A','Correo Ternium (6/11)','Aplique a los precios la logica de polinomica, descalce','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua']
-    ] }, 'bar-plstat-Pendiente_Cliente': { title: 'Parking Lots — Pendiente Cliente (33 items)', tableLabel: 'All PL items with status Pendiente Cliente', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
+    ] }, 'bar-plstat-Pendiente_Cliente': { title: 'Parking Lots — Pendiente Cliente (31 items)', tableLabel: 'All PL items with status Pendiente Cliente', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-MM-020','MM-PUR','020 - Maestro de materiales','Impacto de cambio de código de material en países con PP y Ventas implement','4 - Otros','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-CO-030','CO','030 - Datos maestros de contabilidad y costos','Definición cuentas contables OBYC','9 - Realize: Impacto Alto','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-MM-045','MM-IM','040 - Contabilidad de Gastos Generales y Cálc','Cambio de característica del lote de Semielaborado o Terminado','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Pendiente Cliente'],
@@ -1805,9 +1806,7 @@ const CARD_DATA = {
       ['PL-AR-MM-218','AR-PP','AR090 - Interfaces','Partición/Agrupación de lotes. Revisar casos de impacto para Argentina. Mov','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-B&amp;A-231','B&amp;A','Validación REX Sesión III- 01/10/26','Inclusion de derivación de cuenta para planificación de Material en la part','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-AR-MM-235','MM-IM','AR110 - Impacto en compras','Uso de org de compras para la generación de STOs entre plantas','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
-      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-EO-236','MM-IM','WSBR010-Estructura Organizativa','Confirmación de los centros en alcance para cada paíse de la 3r fase','3 - Impacto Organizacional','1-Definición del Negocio','Pendiente Cliente'],
-      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-239','MM-IM','WSBR020-Maestro de Materiales','Confirmación de los tipos de material por pais','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-240','MM-IM','WSBR020-Maestro de Materiales','Impacto del costo de flete en el proceso de traslado de material entre plan','1 - Impacta el Diseño','1-Definición del Negocio','Pendiente Cliente'],
       ['PL-BR-AMI-MM-241','MM-IM','WSBR020-Maestro de Materiales','Manejo de la estrategia para el uso de Material Cluster en cada país','2 - Impacta la Configuración','1-Definición del Negocio','Pendiente Cliente'],
@@ -1822,9 +1821,8 @@ const CARD_DATA = {
       ['PL-B&amp;A-261','B&amp;A','Taller validacion Costos SF y GG (29/10)','Iconos a usar en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-BR-AMI-MM-271','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-BR-AMI-MM-272','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente']
-    ] }, 'bar-plstat-Pendiente_SAP': { title: 'Parking Lots — Pendiente SAP (5 items)', tableLabel: 'All PL items with status Pendiente SAP', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
+    ] }, 'bar-plstat-Pendiente_SAP': { title: 'Parking Lots — Pendiente SAP (4 items)', tableLabel: 'All PL items with status Pendiente SAP', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','4 - Otros','2-Definición para Configurar','Pendiente SAP'],
-      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP'],
       ['PL-B&amp;A-260','B&amp;A','Taller validacion Costos SF y GG (28/10)','Incluir botón de Eliminar en ajustes de variaciones','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
       ['PL-B&amp;A-262','B&amp;A','Show &amp; Tell Mano de Obra (30/10)','Simplificación de pasos en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
       ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP']
@@ -2282,6 +2280,10 @@ const CARD_DATA = {
       ['PL-B&amp;A-268','B&amp;A','Correo Ternium (6/11)','Cargar precios en monedas diferentes a USD.','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-269','B&amp;A','Correo Ternium (6/11)','Cargar en UM diferentes a la Unidad de medida base y que el programa convie','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-270','B&amp;A','Correo Ternium (6/11)','Aplique a los precios la logica de polinomica, descalce','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua']
+    ] }, 'bar-plstat-Entregado_por_TX': { title: 'Parking Lots — Entregado por TX (3 items)', tableLabel: 'All PL items with status Entregado por TX', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
+      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','2 - Impacta la Configuración','1-Definición del Negocio','Entregado por TX'],
+      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Entregado por TX'],
+      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','1 - Impacta el Diseño','2-Definición para Configurar','Entregado por TX']
     ] }, 'bar-plstat-Entregado_por_SAP': { title: 'Parking Lots — Entregado por SAP (3 items)', tableLabel: 'All PL items with status Entregado por SAP', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-BR-AMI-MM-257','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gatos de transportacion, importación para EU, CentroAmeric','1 - Impacta el Diseño','1-Definición del Negocio','Entregado por SAP'],
       ['PL-BR-AMI-MM-258','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de flete para los traslados entre plantas, gestiona','1 - Impacta el Diseño','1-Definición del Negocio','Entregado por SAP'],
@@ -2406,16 +2408,14 @@ const CARD_DATA = {
     ] },
 
   // ── Pending PL table: per-module pending detail cards ─────────────────────
-    'pl-pending-mod-MM_IM': { title: 'Pending PLs — MM-IM (12 open)', tableLabel: 'Parking Lots pending resolution for module MM-IM', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+    'pl-pending-mod-MM_IM': { title: 'Pending PLs — MM-IM (10 open)', tableLabel: 'Parking Lots pending resolution for module MM-IM', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
       ['PL-MM-045','MM-IM','040 - Contabilidad de Gastos Generales y Cálc','Cambio de característica del lote de Semielaborado o Terminado','Definir el tratamiento que hace NCA para la característica del lote de Terminado','6 - Impacta el Diseño interfaces','2-Definición para Configurar','Jorge Ybarra','Juan Pablo Echevarría','Pendiente Cliente'],
       ['PL-CO-101','MM-IM','020 - Maestro de materiales','Análisis de impacto por definición UMB y UMA','A partir de la definición tomada en el PL 015, evaluar internamente los impactos','4 - Otros','2-Definición para Configurar','Jorge Ybarra','Valentin Doldan','Pendiente Cliente'],
       ['PL-AR-MM-235','MM-IM','AR110 - Impacto en compras','Uso de org de compras para la generación de STOs entre plantas','Definidición de si es requerido una org de compras adicional para la creación de','2 - Impacta la Configuración','1-Definición del Negocio','Jorge Ybarra','Matias/ Valentin','Pendiente Cliente'],
-      ['PL-BR-AMI-EO-236','MM-IM','WSBR010-Estructura Organizativa','Confirmación de los centros en alcance para cada paíse de la 3r fase','ar','3 - Impacto Organizacional','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
-      ['PL-BR-AMI-EO-237','MM-IM','WSBR010-Estructura Organizativa','Confirmación que paises/almacenes consideran el uso de stock negativo','Definir que pais, centro y almacén considerarán el stock negativo','2 - Impacta la Configuración','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
+      ['PL-BR-AMI-EO-236','MM-IM','WSBR010-Estructura Organizativa','Confirmación de los centros en alcance para cada paíse de la 3r fase','ar','3 - Impacto Organizacional','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo LOPEZ Andres Felipe PROV','Pendiente Cliente'],
       ['PL-BR-AMI-MM-239','MM-IM','WSBR020-Maestro de Materiales','Confirmación de los tipos de material por pais','Confirmar si los tipos de materiales mapeados por pais son los que estan dentro ','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
       ['PL-BR-AMI-MM-240','MM-IM','WSBR020-Maestro de Materiales','Impacto del costo de flete en el proceso de traslado de material entre plan','Revisar como se gestiona el costo del flete en tralsado y si este imapcta en el ','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
       ['PL-BR-AMI-MM-241','MM-IM','WSBR020-Maestro de Materiales','Manejo de la estrategia para el uso de Material Cluster en cada país','Analisis interno sobre que paises usarán el MC (aquellos con NCA u otro sistema)','2 - Impacta la Configuración','1-Definición del Negocio','Jorge Ybarra','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
-      ['PL-BR-AMI-MM-249','MM-IM','WSBR110-Impacto en compras y traslados','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hac','Impacto real en FIFO de costos de fletes/trasnportes en compras, que se hacen me','1 - Impacta el Diseño','2-Definición para Configurar','Luis Carlos Fagua','Brasil - Igor Leandro da Silva Araújo','Pendiente SAP'],
       ['PL-BR-AMI-MM-250','MM-IM','WSBR110-Impacto en compras y traslados','Verificar si los materiales ya cumplen con el control de precio y no sufren','Verificar que no se tendrá cambio en controles de precio en materiales','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente'],
       ['PL-BR-AMI-MM-251','MM-IM','WSBR110-Impacto en compras y traslados','Confirmar que Exitos este contemplado el ajuste de precios para todos los p','Confirmar que el ajuste de Exiros en precios, abarque a todos los paises, deltas','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra','Andressa Predebon','Pendiente Cliente'],
       ['PL-BR-AMI-MM-259','MM-IM','WSBR110-Impacto en compras y traslados','Envio de meetin para revisar el proceso de traslados, maquila en EU','Lanzar una sesión especifica para revisar el proceso en EU sonre traslados y maq','1 - Impacta el Diseño','1-Definición del Negocio','Jorge Ybarra, Luis Fagua','Andressa Predebon','Pendiente Cliente']
@@ -2454,9 +2454,8 @@ const CARD_DATA = {
       ['PL-BR-AMI-SD-253','SD','WSBR045 Costo de Venta','Determinación de cuentas en OBYC para mov. 601 SM','Confirmar por los diferentes paises de AMI las cuentas realcionadas al movimient','2 - Impacta la Configuración','1-Definición del Negocio','Ingrid Ordaz','&quot;Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo&quot;','Pendiente Cliente'],
       ['PL-BR-AMI-SD-254','SD','WSBR045 Costo de Venta','Determinación de categorías de valoración','Definir si las categorias de valoración de los materiales coinciden con las cate','2 - Impacta la Configuración','1-Definición del Negocio','Ingrid Ordaz','&quot;Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo&quot;','Pendiente Cliente']
     ] },
-  'pl-pending-mod-CO': { title: 'Pending PLs — CO (2 open)', tableLabel: 'Parking Lots pending resolution for module CO', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
-      ['PL-CO-030','CO','030 - Datos maestros de contabilidad y costos','Definición cuentas contables OBYC','Definición de nuevas cuentas: OBYC por materiales cluster','9 - Realize: Impacto Alto','2-Definición para Configurar','Flavio Chiari','Juan Carlos Carreon Franco Dentis (Luxemburgo)','Pendiente Cliente'],
-      ['PL-BR-AMI-CO-238','CO','WSBR020-Maestro de Materiales','Tipos de materiales para control y determinación de precio S3','Verificar que los tipos de materiales definidos en el template global para contr','2 - Impacta la Configuración','1-Definición del Negocio','Luis Carlos Fagua','Estados Unidos - Juan Carlos Carreón Colombia y CA - Andres Felipe Lopez Brasil - Igor Leandro da Silva Araújo','Pendiente Cliente']
+  'pl-pending-mod-CO': { title: 'Pending PLs — CO (1 open)', tableLabel: 'Parking Lots pending resolution for module CO', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-CO-030','CO','030 - Datos maestros de contabilidad y costos','Definición cuentas contables OBYC','Definición de nuevas cuentas: OBYC por materiales cluster','9 - Realize: Impacto Alto','2-Definición para Configurar','Flavio Chiari','Juan Carlos Carreon Franco Dentis (Luxemburgo)','Pendiente Cliente']
     ] }
 };
 
