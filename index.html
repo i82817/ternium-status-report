@@ -174,15 +174,15 @@
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card green" data-card="pl-closed" onclick="openModal('pl-closed')">
-      <div class="kpi-value">226</div>
+      <div class="kpi-value">227</div>
       <div class="kpi-label">PLs Closed</div>
-      <div class="kpi-sub">84.0% closure rate</div>
+      <div class="kpi-sub">84.4% closure rate</div>
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card orange" data-card="pl-pending" onclick="openModal('pl-pending')">
-      <div class="kpi-value">35</div>
+      <div class="kpi-value">34</div>
       <div class="kpi-label">PLs Pending</div>
-      <div class="kpi-sub">31 client · 4 SAP</div>
+      <div class="kpi-sub">31 client · 3 SAP</div>
       <div class="kpi-hint">▸ Click to view details</div>
     </div>
     <div class="kpi-card gold" data-card="interfaces" onclick="openModal('interfaces')">
@@ -463,10 +463,10 @@
     <div class="chart-card">
       <div class="chart-title">Parking Lots by Status <span style="font-size:10px;color:var(--sap-blue);font-weight:400;margin-left:6px;">▸ click a bar to drill in</span></div>
       <div class="bar-chart">
-        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado')" title="Click to view Cerrado items"><span class="bar-label">Cerrado</span><div class="bar-track"><div class="bar-fill" style="width:81.4%;background:var(--sap-green);">219</div></div><span class="bar-count">219</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado')" title="Click to view Cerrado items"><span class="bar-label">Cerrado</span><div class="bar-track"><div class="bar-fill" style="width:81.8%;background:var(--sap-green);">220</div></div><span class="bar-count">220</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_Cliente')" title="Click to view Pendiente Cliente items"><span class="bar-label">Pendiente Cliente</span><div class="bar-track"><div class="bar-fill" style="width:11.5%;background:var(--sap-red);">31</div></div><span class="bar-count">31</span></div>
-        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_SAP')" title="Click to view Pendiente SAP items"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--sap-orange);">4</div></div><span class="bar-count">4</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado_Pasa_a_Mejora_Continua')" title="Click to view Cerrado-Pasa a Mejora Continua items"><span class="bar-label">Cerrado-Pasa a Mejora Continua</span><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--sap-green);">4</div></div><span class="bar-count">4</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Pendiente_SAP')" title="Click to view Pendiente SAP items"><span class="bar-label">Pendiente SAP</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-orange);">3</div></div><span class="bar-count">3</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Cerrado_Duplicidad')" title="Click to view Cerrado-Duplicidad items"><span class="bar-label">Cerrado-Duplicidad</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-green);">3</div></div><span class="bar-count">3</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Entregado_por_TX')" title="Click to view Entregado por TX items"><span class="bar-label">Entregado por TX</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-grey);">3</div></div><span class="bar-count">3</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-plstat-Entregado_por_SAP')" title="Click to view Entregado por SAP items"><span class="bar-label">Entregado por SAP</span><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:var(--sap-grey);">3</div></div><span class="bar-count">3</span></div>
@@ -690,7 +690,7 @@
       <span class="table-title">Items Awaiting Client or SAP Response</span>
       <span style="display:flex;align-items:center;gap:12px">
         <span style="font-size:10px;color:var(--sap-blue);">▸ click a row to view pending PL list</span>
-        <span class="tag tag-orange">35 open items</span>
+        <span class="tag tag-orange">34 open items</span>
       </span>
     </div>
     <table>
@@ -710,19 +710,19 @@
           <td><span class="tag tag-orange">6</span></td>
           <td>Design Impact</td>
         </tr>
-        <tr class="row-clickable" onclick="openModal('pl-pending-mod-MM_PUR')" title="Click to view pending PLs for MM-PUR">
-          <td><strong style="color:var(--sap-blue)">MM-PUR</strong></td>
-          <td>3</td>
-          <td>2</td>
-          <td><span class="tag tag-orange">5</span></td>
-          <td>Config / Other</td>
-        </tr>
         <tr class="row-clickable" onclick="openModal('pl-pending-mod-AR_PP')" title="Click to view pending PLs for AR-PP">
           <td><strong style="color:var(--sap-blue)">AR-PP</strong></td>
           <td>5</td>
           <td>0</td>
           <td><span class="tag tag-orange">5</span></td>
           <td>Design Impact</td>
+        </tr>
+        <tr class="row-clickable" onclick="openModal('pl-pending-mod-MM_PUR')" title="Click to view pending PLs for MM-PUR">
+          <td><strong style="color:var(--sap-blue)">MM-PUR</strong></td>
+          <td>3</td>
+          <td>1</td>
+          <td><span class="tag tag-orange">4</span></td>
+          <td>Config / Other</td>
         </tr>
         <tr class="row-clickable" onclick="openModal('pl-pending-mod-BANDA')" title="Click to view pending PLs for B&A">
           <td><strong style="color:var(--sap-blue)">B&A</strong></td>
@@ -898,7 +898,7 @@ const CARD_DATA = {
       ['PP','34','28','6','0'],
       ['MM-IM','28','14','10','0'],
       ['AR-PP','25','20','5','0'],
-      ['MM-PUR','17','12','3','2'],
+      ['MM-PUR','17','13','3','1'],
       ['SD','13','8','4','0'],
       ['AR-MM-IM','12','11','0','0'],
       ['FI','5','5','0','0'],
@@ -910,7 +910,7 @@ const CARD_DATA = {
     ]
   },
   'pl-closed': {
-    title: 'Parking Lots Closed — 226 (84.0%)',
+    title: 'Parking Lots Closed — 227 (84.4%)',
     tableLabel: 'Closed parking lots by module',
     headers: ['Module', 'Closed', '% of Module', 'Total PLs'],
     rows: [
@@ -919,7 +919,7 @@ const CARD_DATA = {
       ['PP','28','82.4%','34'],
       ['MM-IM','14','50.0%','28'],
       ['AR-PP','20','80.0%','25'],
-      ['MM-PUR','12','70.6%','17'],
+      ['MM-PUR','13','76.5%','17'],
       ['SD','8','61.5%','13'],
       ['AR-MM-IM','11','91.7%','12'],
       ['FI','5','100.0%','5'],
@@ -931,14 +931,14 @@ const CARD_DATA = {
     ]
   },
   'pl-pending': {
-    title: 'Parking Lots Pending — 35 Open',
+    title: 'Parking Lots Pending — 34 Open',
     tableLabel: 'Items awaiting response — escalation required',
     headers: ['Module', 'Pending Client', 'Pending SAP', 'Total', 'Risk'],
     rows: [
       ['MM-IM','10','0','10','High'],
       ['PP','6','0','6','Medium'],
-      ['MM-PUR','3','2','5','Medium'],
       ['AR-PP','5','0','5','Medium'],
+      ['MM-PUR','3','1','4','Medium'],
       ['B&amp;A','2','2','4','Medium'],
       ['SD','4','0','4','Medium'],
       ['CO','1','0','1','Low']
@@ -1310,7 +1310,7 @@ const CARD_DATA = {
       ['PL-AR-MM-200','AR-MM-PUR','AR110 - Impacto en compras','Costos indirectos asociados a la compra de materiales importados','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
       ['PL-AR-MM-201','AR-MM-PUR','AR110 - Impacto en compras','En el DEL-MM-37 se hace referencia a tenern un unico almacen que represente','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
       ['PL-AR-MM-202','AR-MM-PUR','AR110 - Impacto en compras','En la compra nacional con proveedor logístico el costo de flete no está asi','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado'],
-      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-BR-AMI-MM-271','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-BR-AMI-MM-272','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente']
     ]
@@ -1769,7 +1769,7 @@ const CARD_DATA = {
     ] },
 
   // ── bar-drill: Parking Lots by Status ─────────────────────────────────────
-  'bar-plstat-Cerrado': { title: 'Parking Lots — Cerrado (219 items)', tableLabel: 'All PL items with status Cerrado', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
+  'bar-plstat-Cerrado': { title: 'Parking Lots — Cerrado (220 items)', tableLabel: 'All PL items with status Cerrado', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-EO-001','FI','010 - Estructura Organizativa','Sociedades financieras en alcance de presupuestación','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-EO-002','FI','010 - Estructura Organizativa','Special Ledger en uso actual para la información de Managerial','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-EO-003','FI','010 - Estructura Organizativa','Utilización del campo División en Ternium','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
@@ -1991,6 +1991,7 @@ const CARD_DATA = {
       ['PL-BR-AMI-MM-256','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de transportacion, importación para EU, CentroAmeri','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado-Duplicidad'],
       ['PL-B&amp;A-263','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Data analyzer con todo el nivel de detalle del Real','2 - Impacta la Configuración','3-Otros','Cerrado'],
       ['PL-B&amp;A-264','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Reporte BI que permita la visualización hasta nivel de proyecto','2 - Impacta la Configuración','3-Otros','Cerrado'],
+      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-266','B&amp;A','Correo Ternium (6/11)','Jerarquia de tiempo en modelo de Precio sea promedio','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-267','B&amp;A','Correo Ternium (6/11)','En modelo de precios incluir nueva columna del Valuation Type, para poder v','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-268','B&amp;A','Correo Ternium (6/11)','Cargar precios en monedas diferentes a USD.','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
@@ -2028,11 +2029,6 @@ const CARD_DATA = {
       ['PL-B&amp;A-261','B&amp;A','Taller validacion Costos SF y GG (29/10)','Iconos a usar en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-BR-AMI-MM-271','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente'],
       ['PL-BR-AMI-MM-272','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente Cliente']
-    ] }, 'bar-plstat-Pendiente_SAP': { title: 'Parking Lots — Pendiente SAP (4 items)', tableLabel: 'All PL items with status Pendiente SAP', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
-      ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','4 - Otros','2-Definición para Configurar','Pendiente SAP'],
-      ['PL-B&amp;A-260','B&amp;A','Taller validacion Costos SF y GG (28/10)','Incluir botón de Eliminar en ajustes de variaciones','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
-      ['PL-B&amp;A-262','B&amp;A','Show &amp; Tell Mano de Obra (30/10)','Simplificación de pasos en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
-      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Pendiente SAP']
     ] }, 'bar-plstat-Cerrado_Pasa_a_Mejora_Continua': { title: 'Parking Lots — Cerrado-Pasa a Mejora Continua (4 items)', tableLabel: 'All PL items with status Cerrado-Pasa a Mejora Continua', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-EO-001','FI','010 - Estructura Organizativa','Sociedades financieras en alcance de presupuestación','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-EO-002','FI','010 - Estructura Organizativa','Special Ledger en uso actual para la información de Managerial','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
@@ -2255,11 +2251,16 @@ const CARD_DATA = {
       ['PL-BR-AMI-MM-256','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de transportacion, importación para EU, CentroAmeri','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado-Duplicidad'],
       ['PL-B&amp;A-263','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Data analyzer con todo el nivel de detalle del Real','2 - Impacta la Configuración','3-Otros','Cerrado'],
       ['PL-B&amp;A-264','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Reporte BI que permita la visualización hasta nivel de proyecto','2 - Impacta la Configuración','3-Otros','Cerrado'],
+      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-266','B&amp;A','Correo Ternium (6/11)','Jerarquia de tiempo en modelo de Precio sea promedio','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-267','B&amp;A','Correo Ternium (6/11)','En modelo de precios incluir nueva columna del Valuation Type, para poder v','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-268','B&amp;A','Correo Ternium (6/11)','Cargar precios en monedas diferentes a USD.','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-269','B&amp;A','Correo Ternium (6/11)','Cargar en UM diferentes a la Unidad de medida base y que el programa convie','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-270','B&amp;A','Correo Ternium (6/11)','Aplique a los precios la logica de polinomica, descalce','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua']
+    ] }, 'bar-plstat-Pendiente_SAP': { title: 'Parking Lots — Pendiente SAP (3 items)', tableLabel: 'All PL items with status Pendiente SAP', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
+      ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','4 - Otros','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-260','B&amp;A','Taller validacion Costos SF y GG (28/10)','Incluir botón de Eliminar en ajustes de variaciones','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP'],
+      ['PL-B&amp;A-262','B&amp;A','Show &amp; Tell Mano de Obra (30/10)','Simplificación de pasos en data actions','2 - Impacta la Configuración','2-Definición para Configurar','Pendiente SAP']
     ] }, 'bar-plstat-Cerrado_Duplicidad': { title: 'Parking Lots — Cerrado-Duplicidad (3 items)', tableLabel: 'All PL items with status Cerrado-Duplicidad', headers: ['PL ID','Module','Workstream','Description','Priority','Type','Status'], rows: [
       ['PL-EO-001','FI','010 - Estructura Organizativa','Sociedades financieras en alcance de presupuestación','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-EO-002','FI','010 - Estructura Organizativa','Special Ledger en uso actual para la información de Managerial','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
@@ -2482,6 +2483,7 @@ const CARD_DATA = {
       ['PL-BR-AMI-MM-256','MM-IM','WSBR110-Impacto en compras y traslados','Como asociar los gastos de transportacion, importación para EU, CentroAmeri','1 - Impacta el Diseño','1-Definición del Negocio','Cerrado-Duplicidad'],
       ['PL-B&amp;A-263','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Data analyzer con todo el nivel de detalle del Real','2 - Impacta la Configuración','3-Otros','Cerrado'],
       ['PL-B&amp;A-264','B&amp;A','Show &amp; Tell REX Sesion II (5/11)','Reporte BI que permita la visualización hasta nivel de proyecto','2 - Impacta la Configuración','3-Otros','Cerrado'],
+      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','1 - Impacta el Diseño','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-266','B&amp;A','Correo Ternium (6/11)','Jerarquia de tiempo en modelo de Precio sea promedio','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado'],
       ['PL-B&amp;A-267','B&amp;A','Correo Ternium (6/11)','En modelo de precios incluir nueva columna del Valuation Type, para poder v','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
       ['PL-B&amp;A-268','B&amp;A','Correo Ternium (6/11)','Cargar precios en monedas diferentes a USD.','2 - Impacta la Configuración','2-Definición para Configurar','Cerrado-Pasa a Mejora Continua'],
@@ -2848,19 +2850,18 @@ const CARD_DATA = {
       ['PL-PP-168','PP','Reunión Casos indentificados NCA (4/5)','Determinación de las características del material cluster para los movimien','Para este movimiento de NCA debe determinarse las caractéristicas del material c','2 - Impacta la Configuración','2-Definición para Configurar','','Juan Pablo Echevarria Juan Carlos Carreon','Pendiente Cliente'],
       ['PL-BR-AMI-PP-243','PP','WSBR043 – Producción por Procesos','Proceso de Piso de planta  --&gt; MES  --&gt;. S/4HANA - Custo standard no ','No se calcula el Coste Standard adentro de SAP se debe analisar el proceso produ','1 - Impacta el Diseño','1-Definición del Negocio','Chiarpenello, Pablo','Brasil - Igor Leandro da Silva Araújo Lucas / Rayu.','Pendiente Cliente']
     ] },
-  'pl-pending-mod-MM_PUR': { title: 'Pending PLs — MM-PUR (5 open)', tableLabel: 'Parking Lots pending resolution for module MM-PUR', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
-      ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','Evaluar el impacto técnico asociado a aumentar la volumetría de materiales al ag','4 - Otros','2-Definición para Configurar','Jorge Ybarra','Comunicar nueva volumetría estimada: Roberto Gonzalez  Análisis impacto: Team SAP','Pendiente SAP'],
-      ['PL-MM-020','MM-PUR','020 - Maestro de materiales','Impacto de cambio de código de material en países con PP y Ventas implement','Análisis de impacto en los países donde ya tienen PP y Ventas implementado en op','4 - Otros','2-Definición para Configurar','Jorge Ybarra Track analytcs','Juan Andres Alvarez (CO) / Valentín Doldan / Cristian Gonzalez (CA) / Jose Rodriguez (USA) / Rayl (BR)','Pendiente Cliente'],
-      ['PL-BR-AMI-SD-265','MM-PUR','','Apertura Material Cluster Centroamérica','Revisar si hace falta abrir los materiales por línea productiva o si la informac','1 - Impacta el Diseño','2-Definición para Configurar','Sidney Jonas Neumann','','Pendiente SAP'],
-      ['PL-BR-AMI-MM-271','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','Definir valores de la característica de proveedor en Material cluster para USA c','1 - Impacta el Diseño','2-Definición para Configurar','Juan Carlos Carreon','','Pendiente Cliente'],
-      ['PL-BR-AMI-MM-272','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','Definir si se crean para todos los proveedores los materiales cluster o con un a','1 - Impacta el Diseño','2-Definición para Configurar','Valentín doldan','','Pendiente Cliente']
-    ] },
   'pl-pending-mod-AR_PP': { title: 'Pending PLs — AR-PP (5 open)', tableLabel: 'Parking Lots pending resolution for module AR-PP', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
       ['PL-AR-PP-186','AR-PP','AR090 - Interfaces','Como el SGL registra el grado de acero a la salida del convertidor y como l','Como el SGL registra el grado de acero a la salida del convertidor y como lo reg','1 - Impacta el Diseño','2-Definición para Configurar','','Juan Pablo Echevarría','Pendiente Cliente'],
       ['PL-AR-PP-187','AR-PP','AR090 - Interfaces','SGL Argentina - Revision de la información de consumos','SGL Argentina - Revision de la información de consumos para definir si hace falt','1 - Impacta el Diseño','2-Definición para Configurar','','Bruno Fidalgo','Pendiente Cliente'],
       ['PL-AR-PP-192','AR-PP','AR090 - Interfaces','No todas las líneas tienen el cierre metálico','Tratamiento a dar por el hecho de no tener cierre metálico de algunas líneas. Es','1 - Impacta el Diseño','2-Definición para Configurar','','Juan Pablo Echevarría','Pendiente Cliente'],
       ['PL-AR-MM-217','AR-PP','AR090 - Interfaces','Revisión de líneas manuales y sus procesos.','Revisión de líneas manuales y sus procesos. (SGL)','1 - Impacta el Diseño','1-Definición del Negocio','','Analia','Pendiente Cliente'],
       ['PL-AR-MM-218','AR-PP','AR090 - Interfaces','Partición/Agrupación de lotes. Revisar casos de impacto para Argentina. Mov','Ver Mov. 133 de renombre de materiales.','1 - Impacta el Diseño','1-Definición del Negocio','','Ezequiel Dutra','Pendiente Cliente']
+    ] },
+  'pl-pending-mod-MM_PUR': { title: 'Pending PLs — MM-PUR (4 open)', tableLabel: 'Parking Lots pending resolution for module MM-PUR', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
+      ['PL-MM-019','MM-PUR','020 - Maestro de materiales','Agrupación de materiales por &quot;Ruta&quot; - Impacto Volumetría','Evaluar el impacto técnico asociado a aumentar la volumetría de materiales al ag','4 - Otros','2-Definición para Configurar','Jorge Ybarra','Comunicar nueva volumetría estimada: Roberto Gonzalez  Análisis impacto: Team SAP','Pendiente SAP'],
+      ['PL-MM-020','MM-PUR','020 - Maestro de materiales','Impacto de cambio de código de material en países con PP y Ventas implement','Análisis de impacto en los países donde ya tienen PP y Ventas implementado en op','4 - Otros','2-Definición para Configurar','Jorge Ybarra Track analytcs','Juan Andres Alvarez (CO) / Valentín Doldan / Cristian Gonzalez (CA) / Jose Rodriguez (USA) / Rayl (BR)','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-271','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','Definir valores de la característica de proveedor en Material cluster para USA c','1 - Impacta el Diseño','2-Definición para Configurar','Juan Carlos Carreon','','Pendiente Cliente'],
+      ['PL-BR-AMI-MM-272','MM-PUR','WS DIA 13','Apertura Material Cluster Shreveport','Definir si se crean para todos los proveedores los materiales cluster o con un a','1 - Impacta el Diseño','2-Definición para Configurar','Valentín doldan','','Pendiente Cliente']
     ] },
   'pl-pending-mod-BANDA': { title: 'Pending PLs — B&amp;A (4 open)', tableLabel: 'Parking Lots pending resolution for module B&amp;A', headers: ['PL ID','Module','Workstream','Short Desc','Full Description','Priority','Type','SAP Owner','Client Owner','Status'], rows: [
       ['PL-B&amp;A-231','B&amp;A','Validación REX Sesión III- 01/10/26','Inclusion de derivación de cuenta para planificación de Material en la part','Inclusion de derivación de cuenta para planificación de Material en la parte de ','2 - Impacta la Configuración','2-Definición para Configurar','Mauricio Moreno Maria Rodriguez','Leandro Tiseira Andressa Predebon','Pendiente Cliente'],
