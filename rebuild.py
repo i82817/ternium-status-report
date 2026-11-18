@@ -57,8 +57,10 @@ enh_d     = sum(v for k,v in type_d.items() if 'nhace' in str(k))
 newcfg_d  = sum(v for k,v in type_d.items() if 'Nueva' in str(k))
 rep_d     = sum(v for k,v in type_d.items() if 'Reporte' in str(k))
 mig_d     = type_d.get('Conversion/Migración', 0)
+other_d   = sum(v for k,v in type_d.items() if k not in ('', None) and not any(x in str(k) for x in ('nhace','Interfaz','Nueva','Reporte','Migra','Conver')))
 
 open_rows_d = [r for r in rows_d if str(r[9] or '').strip() == 'Creado']
+mand_open_d = sum(1 for r in rows_d if str(r[7] or '').startswith('1') and str(r[9] or '').strip() == 'Creado')
 
 # ── PARKING LOTS ──────────────────────────────────────────────────────────────
 wb_p  = openpyxl.load_workbook(PL_FILE, data_only=True)
@@ -68,7 +70,7 @@ rows_p = [r for r in ws_p.iter_rows(min_row=5, values_only=True) if any(c is not
 total_p      = len(rows_p)
 stat_p       = Counter(r[10] for r in rows_p if r[10])
 mod_p        = Counter(r[1]  for r in rows_p if r[1])
-pl_closed    = stat_p.get('Cerrado', 0) + stat_p.get('Cerrado-Duplicidad', 0)
+pl_closed    = sum(v for k, v in stat_p.items() if 'Cerrado' in str(k))
 pl_pc        = stat_p.get('Pendiente Cliente', 0)
 pl_ps        = stat_p.get('Pendiente SAP', 0)
 pl_pending   = pl_pc + pl_ps
@@ -92,6 +94,21 @@ mmim_rows  = ws_rows({'MM-IM', 'AR-MM-IM'})
 co_rows    = ws_rows({'CO', 'co', 'AR-CO'})
 mmpur_rows = ws_rows({'MM-PUR', 'AR-MM-PUR'})
 sd_rows    = ws_rows({'SD', 'AR-SD'})
+
+def ws_delta_bar(mods):
+    """Return (open_flex, closed_flex, other_flex) as integer proportions for mini-bar."""
+    total  = sum(1 for r in rows_d if str(r[1] or '').strip() in mods)
+    open_  = sum(1 for r in rows_d if str(r[1] or '').strip() in mods and str(r[9] or '').strip() == 'Creado')
+    closed = sum(1 for r in rows_d if str(r[1] or '').strip() in mods and str(r[9] or '').strip() == 'Cerrado')
+    other  = total - open_ - closed
+    return open_, closed, other
+
+pp_bar    = ws_delta_bar({'PP', 'AR-PP'})
+ba_bar    = ws_delta_bar({'B&A'})
+mmim_bar  = ws_delta_bar({'MM-IM', 'AR-MM-IM'})
+co_bar    = ws_delta_bar({'CO', 'co', 'AR-CO', 'B&A + CO'})
+mmpur_bar = ws_delta_bar({'MM-PUR', 'AR-MM-PUR'})
+sd_bar    = ws_delta_bar({'SD', 'AR-SD'})
 
 # ── MATERIAL CLUSTER ──────────────────────────────────────────────────────────
 wb_mc  = openpyxl.load_workbook(MC_FILE, data_only=True)
@@ -218,7 +235,8 @@ TYPE_GROUPS = [
     ('iface',  'Interface',          lambda r: 'Interfaz' in str(r[12] or '')),
     ('newcfg', 'New Configuration',  lambda r: 'Nueva' in str(r[12] or '')),
     ('rep',    'Report',             lambda r: 'Reporte' in str(r[12] or '')),
-    ('mig',    'Migration / Other',  lambda r: 'Migra' in str(r[12] or '') or 'Conver' in str(r[12] or '')),
+    ('mig',    'Migration',          lambda r: 'Migra' in str(r[12] or '') or 'Conver' in str(r[12] or '')),
+    ('other',  'Other',              lambda r: str(r[12] or '').strip() not in ('', None) and not any(x in str(r[12] or '') for x in ('nhace','Interfaz','Nueva','Reporte','Migra','Conver'))),
 ]
 
 def type_rows_js(filter_fn):
@@ -277,7 +295,7 @@ for st, c in sorted(stat_p.items(), key=lambda x: -x[1]):
 
 # open priority table
 # open priority table (clickable rows)
-open_p12 = [r for r in open_rows_d if str(r[7] or '').startswith(('1', '2'))][:8]
+open_p12 = [r for r in open_rows_d if str(r[7] or '').startswith(('1', '2'))]
 open_rows_html = ''
 for r in open_p12:
     ptag = 'tag-red' if str(r[7] or '').startswith('1') else 'tag-gold'
@@ -622,13 +640,13 @@ html = f'''<!DOCTYPE html>
         <span class="ws-badge tag-blue">{mod_d.get('PP',0)} Deltas</span>
       </div>
       <div class="ws-card-body">
-        <div class="ws-stat-row"><span class="ws-stat-label">Interfaces</span><span class="ws-stat-value">High volume</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Open / Closed / Other</span><span class="ws-stat-value">{pp_bar[0]} · {pp_bar[1]} · {pp_bar[2]}</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">{len(pp_rows)} total</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">NCA MX integrations</span></div>
         <div class="ws-mini-bar">
-          <div class="ws-mini-seg" style="background:var(--sap-red);flex:7"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-green);flex:2"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:2"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:{pp_bar[0]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:{pp_bar[1]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:{max(pp_bar[2],1)}"></div>
         </div>
         <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
       </div>
@@ -640,13 +658,13 @@ html = f'''<!DOCTYPE html>
         <span class="ws-badge tag-gold">{mod_d.get('B&A',0)} Deltas</span>
       </div>
       <div class="ws-card-body">
-        <div class="ws-stat-row"><span class="ws-stat-label">Enhancements</span><span class="ws-stat-value">Largest workstream</span></div>
+        <div class="ws-stat-row"><span class="ws-stat-label">Open / Closed / Other</span><span class="ws-stat-value">{ba_bar[0]} · {ba_bar[1]} · {ba_bar[2]}</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">{len(ba_rows)} total</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">SAC + DSP scope</span></div>
         <div class="ws-mini-bar">
-          <div class="ws-mini-seg" style="background:var(--sap-red);flex:8"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-green);flex:1"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:1"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:{ba_bar[0]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:{ba_bar[1]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:{max(ba_bar[2],1)}"></div>
         </div>
         <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
       </div>
@@ -658,13 +676,13 @@ html = f'''<!DOCTYPE html>
         <span class="ws-badge tag-green">{mod_d.get('MM-IM',0)} Deltas</span>
       </div>
       <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Open / Closed / Other</span><span class="ws-stat-value">{mmim_bar[0]} · {mmim_bar[1]} · {mmim_bar[2]}</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">{len(mmim_rows)} total</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">{mod_p.get("AR-MM-IM",0)} Argentina scope</span></div>
-        <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">Granel NCA movements</span></div>
         <div class="ws-mini-bar">
-          <div class="ws-mini-seg" style="background:var(--sap-red);flex:6"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-green);flex:5"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:4"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:{mmim_bar[0]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:{max(mmim_bar[1],1)}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:{max(mmim_bar[2],1)}"></div>
         </div>
         <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
       </div>
@@ -676,13 +694,13 @@ html = f'''<!DOCTYPE html>
         <span class="ws-badge tag-red">{mod_d.get('CO',0)} Deltas + {mod_d.get('B&A + CO',0)} Cross</span>
       </div>
       <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Open / Closed / Other</span><span class="ws-stat-value">{co_bar[0]} · {co_bar[1]} · {co_bar[2]}</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">{len(co_rows)} total (highest)</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">{mod_p.get("AR-CO",0)} Argentina scope</span></div>
-        <div class="ws-stat-row"><span class="ws-stat-label">Key risk</span><span class="ws-stat-value">Standard cost + COGM</span></div>
         <div class="ws-mini-bar">
-          <div class="ws-mini-seg" style="background:var(--sap-red);flex:6"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-green);flex:3"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:3"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:{co_bar[0]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:{max(co_bar[1],1)}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:{max(co_bar[2],1)}"></div>
         </div>
         <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
       </div>
@@ -694,13 +712,13 @@ html = f'''<!DOCTYPE html>
         <span class="ws-badge tag-grey">{mod_d.get('MM-PUR',0)} Deltas</span>
       </div>
       <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Open / Closed / Other</span><span class="ws-stat-value">{mmpur_bar[0]} · {mmpur_bar[1]} · {mmpur_bar[2]}</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">{len(mmpur_rows)} total</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">{mod_p.get("AR-MM-PUR",0)} Argentina scope</span></div>
-        <div class="ws-stat-row"><span class="ws-stat-label">Status</span><span class="ws-stat-value">Progressing</span></div>
         <div class="ws-mini-bar">
-          <div class="ws-mini-seg" style="background:var(--sap-red);flex:4"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-green);flex:4"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:2"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:{mmpur_bar[0]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:{max(mmpur_bar[1],1)}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:{max(mmpur_bar[2],1)}"></div>
         </div>
         <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
       </div>
@@ -712,12 +730,13 @@ html = f'''<!DOCTYPE html>
         <span class="ws-badge tag-orange">{mod_d.get('SD',0)} Deltas</span>
       </div>
       <div class="ws-card-body">
+        <div class="ws-stat-row"><span class="ws-stat-label">Open / Closed / Other</span><span class="ws-stat-value">{sd_bar[0]} · {sd_bar[1]} · {sd_bar[2]}</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">Parking Lots</span><span class="ws-stat-value">{len(sd_rows)} total</span></div>
         <div class="ws-stat-row"><span class="ws-stat-label">PLs AR</span><span class="ws-stat-value">{mod_p.get("AR-SD",0)} Argentina scope</span></div>
-        <div class="ws-stat-row"><span class="ws-stat-label">Status</span><span class="ws-stat-value">Low delta volume</span></div>
         <div class="ws-mini-bar">
-          <div class="ws-mini-seg" style="background:var(--sap-green);flex:8"></div>
-          <div class="ws-mini-seg" style="background:var(--sap-red);flex:2"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-red);flex:{sd_bar[0]}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-green);flex:{max(sd_bar[1],1)}"></div>
+          <div class="ws-mini-seg" style="background:var(--sap-grey);flex:{max(sd_bar[2],1)}"></div>
         </div>
         <div class="kpi-hint" style="margin-top:10px">▸ Click to view PL details</div>
       </div>
@@ -762,7 +781,8 @@ html = f'''<!DOCTYPE html>
         <div class="bar-row bar-clickable" onclick="openModal('bar-type-iface')" title="Click to view Interface deltas"><span class="bar-label">Interface</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(iface_d,total_d)}%;background:var(--sap-orange);">{iface_d}</div></div><span class="bar-count">{iface_d}</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-type-newcfg')" title="Click to view New Configuration deltas"><span class="bar-label">New Configuration</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(newcfg_d,total_d)}%;background:var(--sap-gold);">{newcfg_d}</div></div><span class="bar-count">{newcfg_d}</span></div>
         <div class="bar-row bar-clickable" onclick="openModal('bar-type-rep')" title="Click to view Report deltas"><span class="bar-label">Report</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(rep_d,total_d)}%;background:var(--sap-mid);">{rep_d}</div></div><span class="bar-count">{rep_d}</span></div>
-        <div class="bar-row bar-clickable" onclick="openModal('bar-type-mig')" title="Click to view Migration / Other deltas"><span class="bar-label">Migration / Other</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(mig_d,total_d)}%;background:var(--sap-grey);">{mig_d}</div></div><span class="bar-count">{mig_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-mig')" title="Click to view Migration deltas"><span class="bar-label">Migration</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(mig_d,total_d)}%;background:var(--sap-grey);">{mig_d}</div></div><span class="bar-count">{mig_d}</span></div>
+        <div class="bar-row bar-clickable" onclick="openModal('bar-type-other')" title="Click to view Other type deltas"><span class="bar-label">Other</span><div class="bar-track"><div class="bar-fill" style="width:{bpct(other_d,total_d)}%;background:#9E9E9E;">{other_d}</div></div><span class="bar-count">{other_d}</span></div>
       </div>
     </div>
     <div class="chart-card">
@@ -829,7 +849,7 @@ html = f'''<!DOCTYPE html>
       <table style="font-size:12px">
         <thead><tr><th>#</th><th>Action</th><th>Phase</th></tr></thead>
         <tbody>
-          <tr><td>1</td><td>Prioritize resolution of {mand_d} Priority-1 deltas before Realize entry</td><td>Explore → Realize</td></tr>
+          <tr><td>1</td><td>Prioritize resolution of {mand_open_d} open Priority-1 deltas before Realize entry</td><td>Explore → Realize</td></tr>
           <tr><td>2</td><td>Schedule interface design sessions for all {iface_d} Interface-type deltas</td><td>Explore</td></tr>
           <tr><td>3</td><td>Escalate {pl_pc} client-pending PLs in next Steering Committee</td><td>Governance</td></tr>
           <tr><td>4</td><td>Conduct GoLive strategy session for Permanent vs Temporary GAPs</td><td>Explore</td></tr>
@@ -1074,11 +1094,19 @@ const CARD_DATA = {{
     ]
   }},
   'bar-type-mig': {{
-    title: 'Migration / Other Deltas ({mig_d} items)',
+    title: 'Migration Deltas ({mig_d} items)',
     tableLabel: 'All Conversion/Migración-type deltas',
     headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
     rows: [
 {type_rows_js(lambda r: 'Migra' in str(r[12] or '') or 'Conver' in str(r[12] or ''))}
+    ]
+  }},
+  'bar-type-other': {{
+    title: 'Other Type Deltas ({other_d} items)',
+    tableLabel: 'Deltas with types not fitting standard categories (Cambio Operativo TX, Sin Definir, etc.)',
+    headers: ['Delta ID', 'Module', 'Description', 'Status', 'Type'],
+    rows: [
+{type_rows_js(lambda r: str(r[12] or '').strip() not in ('', None) and not any(x in str(r[12] or '') for x in ('nhace','Interfaz','Nueva','Reporte','Migra','Conver')))}
     ]
   }},
 
